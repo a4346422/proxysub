@@ -45,6 +45,8 @@ ROUND_SEED = int(os.environ.get("ROUND_SEED", 0))
 INCREMENTAL = os.environ.get("INCREMENTAL", "1") != "0"
 # 实验模式：只复测 output/veterans.json，不探索普通候选池。
 VET_ONLY = os.environ.get("VET_ONLY", "0") == "1"
+# 实验模式：只取老兵，但强制走 B 段路径（TCP 预筛 -> Xray 批量测活）。
+VET_B_PATH = os.environ.get("VET_B_PATH", "0") == "1"
 # B 段（探索）的时间预算（秒）。到点就停在当前批次，把已测出的结果
 # 交出去 —— 比被 workflow timeout 杀掉、整轮零产出好。0 = 不限。
 BUDGET_SEC = int(os.environ.get("PROBE_BUDGET_SEC", 0))
@@ -179,19 +181,24 @@ def main():
     all_vet_keys = {n.get("key") for n in all_vets if n.get("key")}
     pool_vet_keys = {n.get("key") for n in nodes
                      if n.get("key") and n.get("key") in all_vet_keys}
+    if VET_B_PATH:
+        nodes = list(all_vets)
+        pool_vet_keys = all_vet_keys
 
     t0 = time.time()
     pool_n = len(nodes)
     print(f"测活目标 {TEST_URL}，超时 {TIMEOUT}s，重试 {RETRY} 次")
     print(f"老兵诊断: 名单 {len(all_vets)} 个，本轮采集池命中 "
           f"{len(pool_vet_keys)} 个")
+    if VET_B_PATH:
+        print("[VET_B_PATH] 只取老兵，跳过 A 段，强制走 B 段批量测活")
 
     # ---------- A 段：先复测老兵 ----------
     # 上轮（及更早）测通过的节点跳过 TCP 预筛，直接测活。几十个节点
     # 一两批就跑完，几十秒内就有一份可用订阅垫底 —— 即使后面 B 段
     # 超时被 kill，也不会退化成空订阅。
     vet_alive, vet_tested = [], []
-    if INCREMENTAL or VET_ONLY:
+    if (INCREMENTAL or VET_ONLY) and not VET_B_PATH:
         vet_nodes = all_vets
         if vet_nodes:
             print(f"\n[A段] 复测老兵 {len(vet_nodes)} 个（跳过 TCP 预筛）")
