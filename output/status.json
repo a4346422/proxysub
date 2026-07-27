@@ -1,17 +1,15 @@
 {
-  "updated_at": "2026-07-27 21:13:32 UTC",
-  "updated_ts": 1785186812,
-  "pool": 30505,
-  "alive_raw": 458,
+  "updated_at": "2026-07-27 23:43:35 UTC",
+  "updated_ts": 1785195815,
+  "pool": 30368,
+  "alive_raw": 464,
   "alive": 60,
   "links": 60,
   "by_country": {
     "?": 3,
     "BG": 2,
-    "CA": 1,
-    "CH": 1,
-    "DE": 7,
-    "EE": 1,
+    "CA": 2,
+    "DE": 10,
     "FI": 6,
     "FR": 5,
     "GB": 1,
@@ -19,24 +17,20 @@
     "HU": 1,
     "IE": 1,
     "IN": 1,
-    "JP": 1,
     "LT": 4,
-    "NL": 10,
+    "NL": 12,
     "PL": 4,
-    "RU": 3,
-    "SE": 2,
-    "SG": 1,
-    "TH": 1,
-    "TR": 1,
-    "US": 2
+    "RU": 2,
+    "SE": 1,
+    "US": 4
   },
-  "exit_ips": 57,
+  "exit_ips": 58,
   "by_proto": {
     "vless": 60
   },
   "latency_ms": {
-    "min": 388,
-    "max": 1805
+    "min": 310,
+    "max": 1994
   },
   "quality": {
     "latency_max_ms": 2000,
@@ -48,14 +42,14 @@
       "8080",
       "8880"
     ],
-    "after_latency": 333,
-    "after_dedup_exit": 206,
-    "after_dedup_cluster": 165,
-    "after_dedup": 165,
+    "after_latency": 447,
+    "after_dedup_exit": 225,
+    "after_dedup_cluster": 179,
+    "after_dedup": 179,
     "drop_no_latency": 0,
-    "drop_slow": 125,
-    "drop_dup_exit": 127,
-    "drop_dup_cluster": 41,
+    "drop_slow": 17,
+    "drop_dup_exit": 222,
+    "drop_dup_cluster": 46,
     "drop_reality_no_pbk": 0
   },
   "test_url": "https://www.google.com/generate_204",
