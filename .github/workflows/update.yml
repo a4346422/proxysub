@@ -40,6 +40,10 @@ on:
         description: '只运行不提交 output（实验用，1=开启）'
         required: false
         default: '0'
+      vet_only:
+        description: '只复测老兵节点（实验用，1=开启）'
+        required: false
+        default: '0'
 
 # dry-run 实验按参数分组并行；正式更新仍共享一组，避免并发 push 冲突
 concurrency:
@@ -78,6 +82,7 @@ jobs:
       MIN_ALIVE_TO_COMMIT: '1'
       # 查出口 IP / 真实国家。设 0 可关闭（节省约 1-2 分钟）
       CHECK_IP: ${{ github.event.inputs.check_ip || '1' }}
+      VET_ONLY: ${{ github.event.inputs.vet_only || '0' }}
       XRAY_BIN: ${{ github.workspace }}/bin/xray
       PYTHONIOENCODING: utf-8
 

@@ -43,6 +43,8 @@ ROUND_SEED = int(os.environ.get("ROUND_SEED", 0))
 # 增量模式：先复测上轮存活的「老兵」，再用剩余时间探索新节点。
 # 关掉（INCREMENTAL=0）就是原来的全量重跑。
 INCREMENTAL = os.environ.get("INCREMENTAL", "1") != "0"
+# 实验模式：只复测 output/veterans.json，不探索普通候选池。
+VET_ONLY = os.environ.get("VET_ONLY", "0") == "1"
 # B 段（探索）的时间预算（秒）。到点就停在当前批次，把已测出的结果
 # 交出去 —— 比被 workflow timeout 杀掉、整轮零产出好。0 = 不限。
 BUDGET_SEC = int(os.environ.get("PROBE_BUDGET_SEC", 0))
@@ -172,19 +174,25 @@ def main():
     nodes = json.loads((TEMP / "nodes_all.json").read_text(encoding="utf-8"))
     # 预先剔除 xray 无法构造的节点，避免整批配置加载失败
     nodes = [n for n in nodes if xb.to_outbound(n, "t") is not None]
+    all_vets, _ = vt.load()
+    all_vets = [n for n in all_vets if xb.to_outbound(n, "t") is not None]
+    all_vet_keys = {n.get("key") for n in all_vets if n.get("key")}
+    pool_vet_keys = {n.get("key") for n in nodes
+                     if n.get("key") and n.get("key") in all_vet_keys}
 
     t0 = time.time()
     pool_n = len(nodes)
     print(f"测活目标 {TEST_URL}，超时 {TIMEOUT}s，重试 {RETRY} 次")
+    print(f"老兵诊断: 名单 {len(all_vets)} 个，本轮采集池命中 "
+          f"{len(pool_vet_keys)} 个")
 
     # ---------- A 段：先复测老兵 ----------
     # 上轮（及更早）测通过的节点跳过 TCP 预筛，直接测活。几十个节点
     # 一两批就跑完，几十秒内就有一份可用订阅垫底 —— 即使后面 B 段
     # 超时被 kill，也不会退化成空订阅。
     vet_alive, vet_tested = [], []
-    if INCREMENTAL:
-        vet_nodes, _ = vt.load()
-        vet_nodes = [n for n in vet_nodes if xb.to_outbound(n, "t") is not None]
+    if INCREMENTAL or VET_ONLY:
+        vet_nodes = all_vets
         if vet_nodes:
             print(f"\n[A段] 复测老兵 {len(vet_nodes)} 个（跳过 TCP 预筛）")
             vet_tested = vet_nodes
@@ -201,11 +209,23 @@ def main():
         else:
             print("\n[A段] 老兵名单为空（首轮），跳过")
 
+    if VET_ONLY:
+        alive = sorted(vet_alive, key=lambda n: n["latency_ms"])
+        out = TEMP / "alive.json"
+        out.write_text(json.dumps(alive, ensure_ascii=False), encoding="utf-8")
+        el = time.time() - t0
+        print(f"\n[VET_ONLY] 老兵单独复测存活 {len(alive)}/{len(all_vets)}，"
+              f"总耗时 {el/60:.1f} 分钟")
+        print(f"-> {out}")
+        return
+
     # ---------- B 段：探索新节点 ----------
     # 老兵已单独测过，从探索池里剔掉，别测两遍
     vet_keys = {n.get("key") for n in vet_tested if n.get("key")}
     if vet_keys:
+        before = len(nodes)
         nodes = [n for n in nodes if n.get("key") not in vet_keys]
+        print(f"[B段] 从探索池剔除老兵 {before - len(nodes)} 个")
 
     # 命令行参数优先（本地调试用），否则用 MAX_NODES
     limit = int(sys.argv[1]) if len(sys.argv) > 1 else MAX_NODES
@@ -218,8 +238,15 @@ def main():
               f"本轮取 [{off}:{off + limit}]（ROUND_SEED={ROUND_SEED}）")
 
     total_in = len(nodes)
+    b_vet_keys_before_tcp = {n.get("key") for n in nodes
+                             if n.get("key") and n.get("key") in all_vet_keys}
     print(f"\n[B段] 探索候选 {total_in} 节点（已剔除老兵和 xray 不支持的）")
     nodes = prefilter_tcp(nodes)
+    b_vet_keys_after_tcp = {n.get("key") for n in nodes
+                            if n.get("key") and n.get("key") in all_vet_keys}
+    if not INCREMENTAL:
+        print(f"[B段诊断] 全量候选含老兵 {len(b_vet_keys_before_tcp)} 个，"
+              f"TCP 预筛后剩 {len(b_vet_keys_after_tcp)} 个")
 
     batches = [nodes[i:i + xb.BATCH_SIZE]
                for i in range(0, len(nodes), xb.BATCH_SIZE)]
@@ -248,6 +275,7 @@ def main():
             seen_keys.add(k)
         merged.append(n)
     alive = merged
+    alive_vet_count = sum(1 for n in alive if n.get("key") in all_vet_keys)
 
     alive.sort(key=lambda n: n["latency_ms"])
     out = TEMP / "alive.json"
@@ -261,6 +289,7 @@ def main():
     el = time.time() - t0
     print(f"\n存活 {len(alive)} 个 = 老兵 {len(vet_alive)} + 新发现 "
           f"{len(new_alive)}，总耗时 {el/60:.1f} 分钟")
+    print(f"  诊断: 最终存活中老兵 {alive_vet_count} 个")
     print(f"  B段: 占 TCP可达 {len(nodes)} 的 "
           f"{len(new_alive)/max(len(nodes),1)*100:.1f}%，占候选 {total_in} 的 "
           f"{len(new_alive)/max(total_in,1)*100:.1f}%")
