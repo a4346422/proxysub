@@ -129,10 +129,16 @@ def probe_retry(port):
     return False, 0, code
 
 
-def run_batch(nodes, batch_no, total_batches):
+def run_batch(nodes, batch_no, total_batches, diag_keys=None):
     """启动一批内核 → 并发测活 → 返回存活节点（含延迟）"""
+    diag_keys = diag_keys or set()
+    before_diag = sum(1 for n in nodes if n.get("key") in diag_keys)
     # 摘掉会让整份配置加载失败的节点（xray 26.x 移除了部分 transport）
     nodes = xb.drop_bad_outbounds(nodes, f"b{batch_no}")
+    after_diag = sum(1 for n in nodes if n.get("key") in diag_keys)
+    if before_diag:
+        print(f"  [诊断] 批 {batch_no}/{total_batches}: 老兵 {before_diag} 个，"
+              f"drop_bad 后 {after_diag} 个")
     # 相邻批次错开端口段，避免上一批 TIME_WAIT 残留导致新进程启动失败
     base = xb.BASE_PORT + (batch_no % 3) * (xb.BATCH_SIZE + 20)
     cfg, mapping = xb.build_config(nodes, base_port=base)
@@ -158,17 +164,20 @@ def run_batch(nodes, batch_no, total_batches):
         xb.stop_xray(proc)
 
     pct = len(alive) / len(mapping) * 100
+    alive_diag = sum(1 for n in alive if n.get("key") in diag_keys)
     print(f"  批 {batch_no}/{total_batches}: 存活 {len(alive)}/{len(mapping)} ({pct:.1f}%)")
+    if before_diag:
+        print(f"  [诊断] 批 {batch_no}/{total_batches}: 老兵测出 {alive_diag}/{after_diag}")
     return alive
 
 
-def probe_nodes(nodes):
+def probe_nodes(nodes, diag_keys=None):
     """分批测活一组节点，返回存活列表"""
     batches = [nodes[i:i + xb.BATCH_SIZE]
                for i in range(0, len(nodes), xb.BATCH_SIZE)]
     alive = []
     for i, b in enumerate(batches, 1):
-        alive.extend(run_batch(b, i, len(batches)))
+        alive.extend(run_batch(b, i, len(batches), diag_keys))
     return alive
 
 
@@ -203,7 +212,7 @@ def main():
         if vet_nodes:
             print(f"\n[A段] 复测老兵 {len(vet_nodes)} 个（跳过 TCP 预筛）")
             vet_tested = vet_nodes
-            vet_alive = probe_nodes(vet_nodes)
+            vet_alive = probe_nodes(vet_nodes, all_vet_keys)
             keep = len(vet_alive) / max(len(vet_nodes), 1) * 100
             print(f"[A段] 老兵存活 {len(vet_alive)}/{len(vet_nodes)} "
                   f"({keep:.1f}%)，耗时 {time.time() - t0:.0f}s")
@@ -269,7 +278,7 @@ def main():
                   f"{BUDGET_SEC}s，剩余 {len(batches)-i+1} 批留给下一轮")
             break
         tested.extend(b)
-        new_alive.extend(run_batch(b, i, len(batches)))
+        new_alive.extend(run_batch(b, i, len(batches), all_vet_keys))
 
     # ---------- 合并 ----------
     # 老兵优先：同一 key 若两段都有（正常不会），保留 A 段结果
