@@ -84,6 +84,10 @@ jobs:
       PROBE_BUDGET_SEC: '1920'
       TEST_URL: ${{ github.event.inputs.test_url || 'https://www.google.com/generate_204' }}
       MIN_ALIVE_TO_COMMIT: '1'
+      # 少而稳：对外订阅质量门禁（只影响 formats 输出，不裁剪 veterans）
+      LATENCY_MAX_MS: '2000'
+      MAX_OUTPUT_NODES: '100'
+      DEDUP_EXIT_IP: '1'
       # 查出口 IP / 真实国家。设 0 可关闭（节省约 1-2 分钟）
       CHECK_IP: ${{ github.event.inputs.check_ip || '1' }}
       VET_ONLY: ${{ github.event.inputs.vet_only || '0' }}

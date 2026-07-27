@@ -2,6 +2,9 @@
 
 取代原 build_sub.py：去掉 IP 纯净度（trust）相关字段与主备清单分级。
 Clash / sing-box 的字段映射与 clash_parse.py:convert() 互为逆向。
+
+对外订阅会先经 quality.select_stable()（延迟门禁 / 出口去重 / 条数上限），
+veterans / 原始测活结果不受影响。
 """
 import base64
 import json
@@ -12,6 +15,7 @@ from pathlib import Path
 import yaml
 
 from countries import CC_NAME
+from quality import select_stable
 from to_link import to_link
 
 ROOT = Path(__file__).parent
@@ -63,14 +67,36 @@ def _tls_on(n):
     return str(n.get("tls") or "").lower() in ("tls", "reality", "xtls", "true")
 
 
+def _is_reality(n):
+    return str(n.get("tls") or "").lower() == "reality"
+
+
+def _reality_exportable(n):
+    """Reality 无 public key 时无法在 Clash/sing-box/链接里完整表达，整节点丢弃。"""
+    if not _is_reality(n):
+        return True
+    return bool(str(n.get("pbk") or "").strip())
+
+
+def _fingerprint(n):
+    return str(n.get("fp") or "").strip() or "chrome"
+
+
 def to_clash(n, name):
-    """节点 dict → Clash proxy dict；不支持返回 None"""
+    """节点 dict → Clash / Mihomo proxy dict；不支持返回 None。
+
+    Reality 必须带 reality-opts.public-key / short-id，以及 client-fingerprint，
+    否则 meta 内核无法握手（Xray 测活能过、Clash 订阅却全挂）。
+    """
     p = n["proto"]
     net = str(n.get("net") or "tcp")
     if net == "gun":
         net = "grpc"
     # Clash 不支持 h2/http 传输的这些免费节点组合，且 xray 26 已移除
     if net in ("h2", "http"):
+        return None
+    # Reality 缺 pbk 会退化成假 TLS，直接丢弃
+    if not _reality_exportable(n):
         return None
 
     c = {"name": name, "server": n["addr"], "port": int(n["port"])}
@@ -95,6 +121,25 @@ def to_clash(n, name):
         sni = n.get("sni") or n.get("host")
         if sni:
             c["servername"] = str(sni).split(",")[0]
+        if _is_reality(n):
+            # Mihomo / Clash Meta 字段名
+            c["client-fingerprint"] = _fingerprint(n)
+            ro = {}
+            if n.get("pbk"):
+                ro["public-key"] = str(n["pbk"])
+            # short-id 允许空字符串（部分服务端如此配置）
+            if n.get("sid") is not None and str(n.get("sid")) != "":
+                ro["short-id"] = str(n["sid"])
+            elif n.get("sid") == "":
+                ro["short-id"] = ""
+            if n.get("pbk"):
+                c["reality-opts"] = ro
+        elif n.get("fp"):
+            c["client-fingerprint"] = _fingerprint(n)
+        alpn = str(n.get("alpn") or "").strip()
+        if alpn:
+            c["alpn"] = [x.strip() for x in alpn.split(",") if x.strip()]
+
     if net != "tcp":
         c["network"] = net
     if net == "ws":
@@ -109,10 +154,15 @@ def to_clash(n, name):
 
 
 def to_singbox(n, name):
-    """节点 dict → sing-box outbound dict；不支持返回 None"""
+    """节点 dict → sing-box outbound dict；不支持返回 None。
+
+    Reality 走 tls.reality + utls，与官方字段对齐。
+    """
     p = n["proto"]
     net = str(n.get("net") or "tcp")
     if net in ("h2", "http"):
+        return None
+    if not _reality_exportable(n):
         return None
 
     o = {"tag": name, "server": n["addr"], "server_port": int(n["port"])}
@@ -137,6 +187,20 @@ def to_singbox(n, name):
         sni = n.get("sni") or n.get("host")
         if sni:
             tls["server_name"] = str(sni).split(",")[0]
+        alpn = str(n.get("alpn") or "").strip()
+        if alpn:
+            tls["alpn"] = [x.strip() for x in alpn.split(",") if x.strip()]
+        if _is_reality(n):
+            tls["insecure"] = False  # reality 不依赖系统 CA
+            tls["utls"] = {"enabled": True, "fingerprint": _fingerprint(n)}
+            reality = {"enabled": True}
+            if n.get("pbk"):
+                reality["public_key"] = str(n["pbk"])
+            if n.get("sid") is not None:
+                reality["short_id"] = str(n.get("sid") or "")
+            tls["reality"] = reality
+        elif n.get("fp"):
+            tls["utls"] = {"enabled": True, "fingerprint": _fingerprint(n)}
         o["tls"] = tls
     if net == "ws":
         t = {"type": "ws", "path": str(n.get("path") or "/")}
@@ -201,7 +265,27 @@ def main():
     if not src.exists():
         print("缺 temp/alive.json，先跑 check_alive.py")
         return 1
-    nodes = json.loads(src.read_text(encoding="utf-8"))
+    raw_nodes = json.loads(src.read_text(encoding="utf-8"))
+
+    # 少而稳：只影响对外订阅；原始 alive.json / veterans 保持完整
+    nodes, qstat = select_stable(raw_nodes)
+    # 与 to_clash/to_singbox 一致：缺 pbk 的 Reality 不进任何订阅
+    dropped_reality = [n for n in nodes if not _reality_exportable(n)]
+    if dropped_reality:
+        nodes = [n for n in nodes if _reality_exportable(n)]
+        print(f"  丢弃缺 pbk 的 Reality {len(dropped_reality)} 个（无法完整导出）")
+        qstat = dict(qstat)
+        qstat["drop_reality_no_pbk"] = len(dropped_reality)
+        qstat["alive_output"] = len(nodes)
+    print(
+        f"质量门禁: raw {qstat['alive_raw']} → "
+        f"延迟≤{qstat['latency_max_ms']}ms {qstat['after_latency']} → "
+        f"出口去重 {qstat['after_dedup']} → 输出 {qstat['alive_output']}"
+        f"（上限 {qstat['max_output_nodes']}，"
+        f"丢无延迟 {qstat['drop_no_latency']} / "
+        f"超时延 {qstat['drop_slow']} / 同出口 {qstat['drop_dup_exit']}）"
+    )
+
     nodes.sort(key=output_sort_key)
     OUT.mkdir(parents=True, exist_ok=True)
 
@@ -228,10 +312,12 @@ def main():
     pool = TEMP / "nodes_all.json"
     pool_n = len(json.loads(pool.read_text(encoding="utf-8"))) if pool.exists() else 0
     latencies = [n["latency_ms"] for n in nodes if "latency_ms" in n]
+    # 统计以「实际写入订阅」的节点为准；alive_raw 保留测活原值便于对比
     status = {
         "updated_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
         "updated_ts": int(time.time()),
         "pool": pool_n,
+        "alive_raw": qstat["alive_raw"],
         "alive": len(nodes),
         "links": len(links),
         "by_country": {cc: sum(1 for n in nodes
@@ -240,10 +326,21 @@ def main():
                                          for n in nodes})},
         "exit_ips": len({n["exit_ip"] for n in nodes if n.get("exit_ip")}),
         "by_proto": {p: sum(1 for n in nodes if n["proto"] == p)
-                     for p in sorted({n["proto"] for n in nodes})},
+                     for p in sorted({n["proto"] for n in nodes})} if nodes else {},
         "latency_ms": {
             "min": min(latencies) if latencies else None,
             "max": max(latencies) if latencies else None,
+        },
+        "quality": {
+            "latency_max_ms": qstat["latency_max_ms"],
+            "max_output_nodes": qstat["max_output_nodes"],
+            "dedup_exit_ip": qstat["dedup_exit_ip"],
+            "after_latency": qstat["after_latency"],
+            "after_dedup": qstat["after_dedup"],
+            "drop_no_latency": qstat["drop_no_latency"],
+            "drop_slow": qstat["drop_slow"],
+            "drop_dup_exit": qstat["drop_dup_exit"],
+            "drop_reality_no_pbk": qstat.get("drop_reality_no_pbk", 0),
         },
         "test_url": os.environ.get("TEST_URL",
                                    "https://www.google.com/generate_204"),
@@ -251,12 +348,14 @@ def main():
         "veterans": len(json.loads((OUT / "veterans.json").read_text(
             encoding="utf-8")).get("nodes", []))
         if (OUT / "veterans.json").exists() else 0,
-        "note": "alive = 经节点实际请求 test_url 返回 204 的节点数",
+        "note": ("alive = 质量门禁后写入订阅的节点数；"
+                 "alive_raw = 经节点实际请求 test_url 返回 204 的原始测活数"),
     }
     (OUT / "status.json").write_text(
         json.dumps(status, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    print(f"节点池 {pool_n} → 存活 {len(nodes)} → 输出 {len(links)} 条链接")
+    print(f"节点池 {pool_n} → 测活 {qstat['alive_raw']} → "
+          f"订阅 {len(nodes)} → 链接 {len(links)}")
     print(f"  nodes.txt / sub.txt / clash.yaml / singbox.json / status.json")
     print(f"  -> {OUT}")
     for n, nm in list(zip(nodes, names))[:10]:
