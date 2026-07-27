@@ -9,10 +9,10 @@
 
 | 客户端 | 地址 |
 |---|---|
-| v2rayN / v2rayNG / Nekobox | `https://raw.githubusercontent.com/USER/REPO/main/output/sub.txt` |
-| Clash / Mihomo / Clash Verge | `https://raw.githubusercontent.com/USER/REPO/main/output/clash.yaml` |
-| sing-box (SFI/SFA/SFM) | `https://raw.githubusercontent.com/USER/REPO/main/output/singbox.json` |
-| 明文链接（人工查看） | `https://raw.githubusercontent.com/USER/REPO/main/output/nodes.txt` |
+| v2rayN / v2rayNG / Nekobox | `https://raw.githubusercontent.com/a4346422/proxysub/main/output/sub.txt` |
+| Clash / Mihomo / Clash Verge | `https://raw.githubusercontent.com/a4346422/proxysub/main/output/clash.yaml` |
+| sing-box (SFI/SFA/SFM) | `https://raw.githubusercontent.com/a4346422/proxysub/main/output/singbox.json` |
+| 明文链接（人工查看） | `https://raw.githubusercontent.com/a4346422/proxysub/main/output/nodes.txt` |
 
 **国内直连 `raw.githubusercontent.com` 常不稳定**，可换 jsDelivr 镜像：
 
