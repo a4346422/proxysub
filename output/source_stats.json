@@ -1,0 +1,118 @@
+{
+  "total_nodes": 30279,
+  "total_alive": 69,
+  "sources": [
+    {
+      "source": "Pawdroid/Free-servers:sub",
+      "nodes": 11,
+      "alive": 4,
+      "alive_rate": 36.364,
+      "avg_latency_ms": 1745
+    },
+    {
+      "source": "ermaozi/get_subscribe:v2ray.txt",
+      "nodes": 20,
+      "alive": 3,
+      "alive_rate": 15.0,
+      "avg_latency_ms": 5652
+    },
+    {
+      "source": "free-nodes/v2rayfree:v202607261",
+      "nodes": 454,
+      "alive": 5,
+      "alive_rate": 1.101,
+      "avg_latency_ms": 1155
+    },
+    {
+      "source": "Leon406/SubCrawler:vless",
+      "nodes": 24680,
+      "alive": 56,
+      "alive_rate": 0.227,
+      "avg_latency_ms": 2277
+    },
+    {
+      "source": "mahdibland/V2RayAggregator:sub_merge_base64.txt",
+      "nodes": 4604,
+      "alive": 1,
+      "alive_rate": 0.022,
+      "avg_latency_ms": 5699
+    },
+    {
+      "source": "anaer/Sub:clash.yaml",
+      "nodes": 271,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    },
+    {
+      "source": "ts-sf/fly:v2",
+      "nodes": 52,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    },
+    {
+      "source": "mfuu/v2ray:v2ray",
+      "nodes": 44,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    },
+    {
+      "source": "w1770946466/Auto_proxy:Long_term_subscription",
+      "nodes": 43,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    },
+    {
+      "source": "ermaozi01/free_clash_vpn:v2ray.txt",
+      "nodes": 26,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    },
+    {
+      "source": "peasoft/NoMoreWalls:list_raw.txt",
+      "nodes": 18,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    },
+    {
+      "source": "vxiaov/free_proxies:clash.provider.yaml",
+      "nodes": 16,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    },
+    {
+      "source": "ripaojiedian/freenode:sub",
+      "nodes": 14,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    },
+    {
+      "source": "Huibq/TrojanLinks:vmess",
+      "nodes": 10,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    },
+    {
+      "source": "Pawdroid/Free-servers:sub_en",
+      "nodes": 10,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    },
+    {
+      "source": "freefq/free:v2",
+      "nodes": 6,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    }
+  ]
+}

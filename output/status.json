@@ -1,0 +1,38 @@
+{
+  "updated_at": "2026-07-26 22:54:23 UTC",
+  "updated_ts": 1785106463,
+  "pool": 30279,
+  "alive": 69,
+  "links": 69,
+  "by_country": {
+    "?": 2,
+    "AT": 1,
+    "CH": 1,
+    "CZ": 2,
+    "DE": 3,
+    "FI": 3,
+    "HU": 1,
+    "IE": 1,
+    "JP": 1,
+    "PL": 1,
+    "RU": 1,
+    "SG": 2,
+    "TH": 4,
+    "TR": 38,
+    "TW": 2,
+    "US": 6
+  },
+  "exit_ips": 28,
+  "by_proto": {
+    "ss": 2,
+    "trojan": 1,
+    "vless": 66
+  },
+  "latency_ms": {
+    "min": 368,
+    "max": 7140
+  },
+  "test_url": "https://www.google.com/generate_204",
+  "veterans": 69,
+  "note": "alive = 经节点实际请求 test_url 返回 204 的节点数"
+}

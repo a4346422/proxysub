@@ -1,0 +1,12 @@
+# 中间产物：节点池、测活结果、xray 临时配置
+scripts/temp/
+temp/
+
+# CI 下载的内核
+bin/
+
+# 本地 Claude 配置
+.claude/
+
+__pycache__/
+*.pyc

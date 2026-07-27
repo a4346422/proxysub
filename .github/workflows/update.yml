@@ -1,0 +1,172 @@
+name: Update Subscription
+
+on:
+  schedule:
+    # 每小时。单轮约 35 分钟（预筛复查后待测节点翻倍），30 分钟间隔会持续
+    # 重叠、被 concurrency 挤压。取 17 分而非整点：Actions 整点排队最重，
+    # 且调度本身有 10-30 分钟抖动（GitHub 不保证准时）。
+    - cron: '17 * * * *'
+  workflow_dispatch:
+    inputs:
+      batch_size:
+        description: '每批 socks 入站数'
+        required: false
+        default: '300'
+      probe_timeout:
+        description: '测活超时（秒）'
+        required: false
+        default: '8'
+      probe_workers:
+        description: '测活并发'
+        required: false
+        default: '250'
+      test_url:
+        description: '测活目标 URL'
+        required: false
+        default: 'https://www.google.com/generate_204'
+      check_ip:
+        description: '查出口IP和真实国家（0=关闭）'
+        required: false
+        default: '1'
+      incremental:
+        description: '增量模式：先复测老兵再探索新节点（0=全量重跑）'
+        required: false
+        default: '1'
+
+# 同一时间只跑一个，避免调度堆积时并发 push 冲突
+concurrency:
+  group: update-sub
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    # 45 分钟：TCP 预筛加了分片+复查后可达数从 7.5k 涨到 17k（修掉了大规模
+    # 并发下约 55 个可用节点的误杀），代价是单轮约 35 分钟。公开库分钟数无
+    # 上限，且 cron 间隔 30min + concurrency 串行化，长跑只是等更久。
+    timeout-minutes: 45
+
+    env:
+      BATCH_SIZE: ${{ github.event.inputs.batch_size || '300' }}
+      PROBE_TIMEOUT: ${{ github.event.inputs.probe_timeout || '8' }}
+      PROBE_WORKERS: ${{ github.event.inputs.probe_workers || '250' }}
+      TCP_WORKERS: '400'
+      # 兜底：源突然暴涨时按轮次偏移抽样，避免跑超 timeout-minutes。
+      # 3 万节点实测 16.8 分钟，留出余量设 32000。
+      MAX_NODES: '32000'
+      # 每小时轮换抽样起点，让超限时后面的源也能轮到
+      ROUND_SEED: ${{ github.run_number }}
+      # 增量模式：A 段先复测 output/veterans.json 里的老兵（几十秒出一份
+      # 可用订阅垫底），B 段再探索新节点。设 0 退回全量重跑。
+      INCREMENTAL: ${{ github.event.inputs.incremental || '1' }}
+      # B 段时间预算 32 分钟：到点停在当前批次，把已测出的交出去。
+      # 后面还要 check_ip(~2min) + formats + 提交，45 分钟 timeout 留足余量。
+      PROBE_BUDGET_SEC: '1920'
+      TEST_URL: ${{ github.event.inputs.test_url || 'https://www.google.com/generate_204' }}
+      MIN_ALIVE_TO_COMMIT: '1'
+      # 查出口 IP / 真实国家。设 0 可关闭（节省约 1-2 分钟）
+      CHECK_IP: ${{ github.event.inputs.check_ip || '1' }}
+      XRAY_BIN: ${{ github.workspace }}/bin/xray
+      PYTHONIOENCODING: utf-8
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install --quiet pyyaml
+
+      - name: Download Xray-core
+        run: |
+          mkdir -p bin
+          # 取 latest release 的 linux-64 资产
+          URL=$(curl -sSL https://api.github.com/repos/XTLS/Xray-core/releases/latest \
+                | grep -o '"browser_download_url": *"[^"]*Xray-linux-64\.zip"' \
+                | head -1 | cut -d'"' -f4)
+          if [ -z "$URL" ]; then
+            echo "::error::未能解析 Xray-linux-64.zip 下载地址"; exit 1
+          fi
+          echo "下载 $URL"
+          curl -sSL -o /tmp/xray.zip "$URL"
+          # 解全部内容：只列指定文件名时，若某项不在压缩包内 unzip 会报错
+          unzip -o -q /tmp/xray.zip -d bin
+          chmod +x bin/xray
+
+      - name: Verify Xray works
+        run: |
+          # fail fast：内核不可用时立即失败，不要静默产出空订阅
+          "$XRAY_BIN" version || { echo "::error::xray 无法执行"; exit 1; }
+
+      - name: Collect nodes
+        run: python scripts/collect.py
+
+      - name: Probe alive nodes
+        run: python scripts/check_alive.py
+
+      - name: Resolve exit IP / country
+        # 节点名里的国家标注大量不实，实测出口才准。失败不影响出订阅。
+        if: env.CHECK_IP != '0'
+        continue-on-error: true
+        run: python scripts/check_ip.py
+
+      - name: Build subscriptions
+        run: python scripts/formats.py
+
+      - name: Per-source stats
+        run: python scripts/src_stats.py
+
+      - name: Accumulate source history
+        # 单轮存活总数仅 20-30 个，小源本来就可能测不出存活。
+        # 累积多轮才能判断某个源是真的没用，还是运气不好。
+        run: python scripts/src_history.py
+
+      - name: Check result sanity
+        id: sanity
+        run: |
+          # 必须显式 encoding：status.json 含中文，默认编码在部分环境下会解码失败，
+          # 导致 ALIVE 取空 → 数值比较报错 → 保护逻辑被跳过
+          ALIVE=$(python -c "import json,io;print(json.load(io.open('output/status.json',encoding='utf-8'))['alive'])")
+          if ! [ "$ALIVE" -ge 0 ] 2>/dev/null; then
+            echo "::error::无法读取存活数（得到 '$ALIVE'），中止以免误提交"; exit 1
+          fi
+          echo "alive=$ALIVE" >> "$GITHUB_OUTPUT"
+          echo "存活节点: $ALIVE (提交阈值 $MIN_ALIVE_TO_COMMIT)"
+          if [ "$ALIVE" -lt "$MIN_ALIVE_TO_COMMIT" ]; then
+            # 不失败退出，只是跳过提交 —— 保住上一次的可用订阅，
+            # 避免某次网络异常把好订阅覆盖成空文件
+            echo "::warning::存活数 $ALIVE 低于阈值，跳过提交以保留既有订阅"
+            echo "commit=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "commit=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push
+        # output/veterans.json（老兵名单）也在这里被提交 —— 这是它能跨轮
+        # 存活的唯一途径，runner 每轮都是全新容器。
+        # 注意：sanity 判定跳过提交时名单更新也会丢弃。这是有意的：那种情况
+        # 通常是 runner 网络异常导致全灭，此时的 miss 计数不可信，丢掉更安全。
+        if: steps.sanity.outputs.commit == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add output/
+          if git diff --cached --quiet; then
+            echo "订阅内容无变化，跳过提交"
+            exit 0
+          fi
+          git commit -m "chore: update subscription — ${{ steps.sanity.outputs.alive }} alive nodes ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+          # 调度抖动可能导致并发运行，push 前先 rebase 一次
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+          git push
+
+      - name: Summary
+        if: always()
+        env:
+          COMMITTED: ${{ steps.sanity.outputs.commit }}
+        run: python scripts/summary.py >> "$GITHUB_STEP_SUMMARY"

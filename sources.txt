@@ -1,0 +1,70 @@
+# 订阅源列表 —— 改这里即可增删源，不必改代码
+#   一行一个 URL；`#` 开头为注释
+#   Clash YAML 类型的源在 URL 后加空格 + clash 标记
+#
+# 失效源会被自动跳过（日志里标 FAIL），不影响其余源。
+#
+# ===== 删源判定标准（重要）=====
+# 不要凭单轮的「存活 0」删源。单轮存活总数只有 20-40 个，一个几十节点的
+# 源本来就极可能测不出存活。实例：mahdibland/V2RayAggregator（4604 节点）
+# 第 1 轮零存活，第 2 轮就出了 1 个 —— 按单轮删会误杀池子里第二大的源。
+#
+# 正确做法：看 output/source_history.json 的多轮累积（src_history.py 维护），
+# 满 MIN_ROUNDS_TO_JUDGE（默认 10）轮仍为 0 才考虑删。
+#
+# 本次（2026-07-27，2 轮数据）只删了体量大且两轮皆零的 3 个源，
+# 合计 460 节点。其余 12 个零存活源合计仅 323 节点（占池 1%），
+# 保留作为主力源失效时的冗余 —— 删了不省时间，却会丢掉抗风险能力。
+
+# ---- 链接式订阅（base64 或明文，一行一个 xxx:// 链接）----
+https://raw.githubusercontent.com/ripaojiedian/freenode/main/sub
+https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub
+https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray
+https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge_base64.txt
+# 已移除 mahdibland 的两个 Eternity 榜单（各 200 个节点）：实测其端点
+# 100% 被上面的 sub_merge_base64.txt 覆盖，是同作者的另一份视图，纯冗余。
+https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/v2ray.txt
+https://raw.githubusercontent.com/ermaozi01/free_clash_vpn/main/subscribe/v2ray.txt
+https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list_raw.txt
+https://raw.githubusercontent.com/w1770946466/Auto_proxy/main/Long_term_subscription1
+https://raw.githubusercontent.com/freefq/free/master/v2
+
+# Leon406/SubCrawler 按协议分表，更新频繁。vless 表实测 36002 个节点、
+# 20545 个唯一服务器，是最大的单一来源（累计 41 个存活，占总数近半）。
+https://raw.githubusercontent.com/Leon406/SubCrawler/main/sub/share/vless
+# 已移除 SubCrawler 的 ss(145节点) 和 tr(48节点) 分表：连续两轮零存活。
+# vless 分表才是该源的价值所在。
+https://raw.githubusercontent.com/ts-sf/fly/main/v2
+https://raw.githubusercontent.com/Huibq/TrojanLinks/master/links/vmess
+
+# free-nodes/v2rayfree 按日期滚动命名，仓库只保留最近 5 天。
+# {YMD} 展开成最近 DATE_LOOKBACK_DAYS 天，过期的 404 自动跳过。
+# 只取后缀 1：实测每天的 ...1 和 ...2 两个文件内容完全重复（...2 贡献 +0）。
+# 回溯天数已从 3 降到 1：实测前 1-2 天的文件各只补 ~19 个节点且两轮零存活，
+# 当天文件才是有效来源（452 节点 / 11 个存活）。
+https://raw.githubusercontent.com/free-nodes/v2rayfree/main/v{YMD}1
+
+# Pawdroid/Free-servers 除根目录 sub 外，static/ 下还有多语言分表，内容不完全相同
+https://raw.githubusercontent.com/Pawdroid/Free-servers/main/static/sub_en
+
+# ---- Clash YAML 订阅（proxies: 列表）----
+#
+# 注意：下面几个源在采集日志里常显示「+0」，但**不要据此删除**。
+# 显示 0 只是因为同仓库的链接式版本先被收录了（端点级去重生效）。
+# 实测它们在两大主力源之外仍有独有端点：
+#   mfuu/clash.yaml 14 个、ermaozi/clash.yml 12 个、
+#   AutoMergePublicNodes 2 个、freenode/clash 1 个。
+# 一旦上游主力源失效，这些就是补位来源。判断冗余要看端点差集，不是看 +0。
+
+# anaer/Sub 是主力源，实测单独贡献数百个节点（多为 vless）
+https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml clash
+# 已移除 ClashX-V2Ray-TopFreeProxy/combine/clash.config.yaml（267 节点）：
+# 端点新增虽多，但连续两轮零存活，是本批里体量最大的无产出源。
+# vxiaov/free_proxies，TopFreeProxy 的上游之一
+https://raw.githubusercontent.com/vxiaov/free_proxies/main/clash/clash.provider.yaml clash
+https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml clash
+https://raw.githubusercontent.com/mfuu/v2ray/master/clash.yaml clash
+https://raw.githubusercontent.com/ripaojiedian/freenode/main/clash clash
+# 这两个源的 400KB 体积主要是路由 rules，proxies 实际只有十几到四十个
+https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.yml clash
+https://raw.githubusercontent.com/chengaopan/AutoMergePublicNodes/master/list.yml clash
