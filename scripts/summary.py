@@ -29,9 +29,17 @@ def main():
     else:
         print(f"| 存活 | **{s.get('alive')}** |")
     if q:
+        _on, _off = '开', '关'
         print(f"| 门禁 | 延迟≤{q.get('latency_max_ms')}ms，"
               f"上限{q.get('max_output_nodes')}，"
-              f"出口去重={'开' if q.get('dedup_exit_ip') else '关'} |")
+              f"出口去重={_on if q.get('dedup_exit_ip') else _off}，"
+              f"集群去重={_on if q.get('dedup_cluster', True) else _off} |")
+        if q.get('drop_dup_cluster') or q.get('after_dedup_cluster') is not None:
+            print(f"| 门禁过程 | 延迟后 {q.get('after_latency')} → "
+                  f"出口去重 {q.get('after_dedup_exit', q.get('after_dedup'))} → "
+                  f"集群去重 {q.get('after_dedup_cluster', q.get('after_dedup'))} "
+                  f"（丢同出口 {q.get('drop_dup_exit', 0)} / "
+                  f"同集群 {q.get('drop_dup_cluster', 0)}） |")
     if s.get("veterans"):
         print(f"| 老兵名单 | {s['veterans']}（跨轮沉淀，下轮 A 段直接复测） |")
     print(f"| 协议分布 | {s.get('by_proto')} |")
@@ -39,7 +47,7 @@ def main():
     print(f"| 更新时间 | {s.get('updated_at')} |")
     print(f"| 已提交 | {os.environ.get('COMMITTED', 'n/a')} |")
     print(f"\n存活判定：经节点实际请求 `{s.get('test_url')}` 返回 204；"
-          f"写入订阅前再经质量门禁（延迟/出口去重/条数上限）。")
+          f"写入订阅前再经质量门禁（延迟/出口去重/集群去重/结构排序/条数上限）。")
 
     if not s.get("alive"):
         print("\n> 本次订阅输出为 0，已跳过提交以保留上一次的可用订阅。")

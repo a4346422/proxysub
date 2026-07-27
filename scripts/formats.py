@@ -3,7 +3,7 @@
 取代原 build_sub.py：去掉 IP 纯净度（trust）相关字段与主备清单分级。
 Clash / sing-box 的字段映射与 clash_parse.py:convert() 互为逆向。
 
-对外订阅会先经 quality.select_stable()（延迟门禁 / 出口去重 / 条数上限），
+对外订阅会先经 quality.select_stable()（延迟门禁 / 出口去重 / 集群去重 / 结构排序 / 条数上限），
 veterans / 原始测活结果不受影响。
 """
 import base64
@@ -280,10 +280,13 @@ def main():
     print(
         f"质量门禁: raw {qstat['alive_raw']} → "
         f"延迟≤{qstat['latency_max_ms']}ms {qstat['after_latency']} → "
-        f"出口去重 {qstat['after_dedup']} → 输出 {qstat['alive_output']}"
+        f"出口去重 {qstat.get('after_dedup_exit', qstat['after_dedup'])} → "
+        f"集群去重 {qstat.get('after_dedup_cluster', qstat['after_dedup'])} → "
+        f"输出 {qstat['alive_output']}"
         f"（上限 {qstat['max_output_nodes']}，"
         f"丢无延迟 {qstat['drop_no_latency']} / "
-        f"超时延 {qstat['drop_slow']} / 同出口 {qstat['drop_dup_exit']}）"
+        f"超时延 {qstat['drop_slow']} / 同出口 {qstat['drop_dup_exit']} / "
+        f"同集群 {qstat.get('drop_dup_cluster', 0)}）"
     )
 
     nodes.sort(key=output_sort_key)
@@ -335,11 +338,16 @@ def main():
             "latency_max_ms": qstat["latency_max_ms"],
             "max_output_nodes": qstat["max_output_nodes"],
             "dedup_exit_ip": qstat["dedup_exit_ip"],
+            "dedup_cluster": qstat.get("dedup_cluster", True),
+            "farm_ports": qstat.get("farm_ports", []),
             "after_latency": qstat["after_latency"],
+            "after_dedup_exit": qstat.get("after_dedup_exit", qstat["after_dedup"]),
+            "after_dedup_cluster": qstat.get("after_dedup_cluster", qstat["after_dedup"]),
             "after_dedup": qstat["after_dedup"],
             "drop_no_latency": qstat["drop_no_latency"],
             "drop_slow": qstat["drop_slow"],
             "drop_dup_exit": qstat["drop_dup_exit"],
+            "drop_dup_cluster": qstat.get("drop_dup_cluster", 0),
             "drop_reality_no_pbk": qstat.get("drop_reality_no_pbk", 0),
         },
         "test_url": os.environ.get("TEST_URL",
