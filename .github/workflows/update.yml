@@ -51,7 +51,7 @@ on:
 
 # dry-run 实验按参数分组并行；正式更新仍共享一组，避免并发 push 冲突
 concurrency:
-  group: ${{ github.event.inputs.dry_run == '1' && format('update-sub-dry-{0}-{1}-{2}-{3}', github.event.inputs.tcp_chunk || 'default', github.event.inputs.probe_workers || 'default', github.event.inputs.incremental || '1', github.event.inputs.vet_b_path || '0') || 'update-sub' }}
+  group: ${{ github.event.inputs.dry_run == '1' && format('update-sub-dry-{0}-{1}-{2}-{3}-{4}', github.event.inputs.tcp_chunk || 'default', github.event.inputs.probe_workers || 'default', github.event.inputs.batch_size || 'default', github.event.inputs.incremental || '1', github.event.inputs.vet_b_path || '0') || 'update-sub' }}
   cancel-in-progress: false
 
 permissions:
