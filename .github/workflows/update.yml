@@ -20,6 +20,10 @@ on:
         description: '测活并发'
         required: false
         default: '250'
+      tcp_chunk:
+        description: 'TCP 预筛分片大小'
+        required: false
+        default: '2000'
       test_url:
         description: '测活目标 URL'
         required: false
@@ -54,6 +58,7 @@ jobs:
       PROBE_TIMEOUT: ${{ github.event.inputs.probe_timeout || '8' }}
       PROBE_WORKERS: ${{ github.event.inputs.probe_workers || '250' }}
       TCP_WORKERS: '400'
+      TCP_CHUNK: ${{ github.event.inputs.tcp_chunk || '2000' }}
       # 兜底：源突然暴涨时按轮次偏移抽样，避免跑超 timeout-minutes。
       # 3 万节点实测 16.8 分钟，留出余量设 32000。
       MAX_NODES: '32000'
