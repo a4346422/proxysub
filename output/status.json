@@ -1,22 +1,22 @@
 {
-  "updated_at": "2026-07-27 02:06:09 UTC",
-  "updated_ts": 1785117969,
-  "pool": 30315,
+  "updated_at": "2026-07-27 03:29:06 UTC",
+  "updated_ts": 1785122946,
+  "pool": 30406,
   "alive": 60,
   "links": 60,
   "by_country": {
-    "?": 2,
+    "?": 1,
     "AT": 1,
     "CZ": 2,
-    "DE": 2,
-    "FI": 3,
+    "DE": 3,
+    "FI": 2,
     "HU": 1,
     "IE": 1,
     "JP": 1,
     "PL": 1,
     "SG": 2,
     "TH": 4,
-    "TR": 38,
+    "TR": 39,
     "US": 2
   },
   "exit_ips": 20,
@@ -25,8 +25,8 @@
     "vless": 58
   },
   "latency_ms": {
-    "min": 417,
-    "max": 4550
+    "min": 536,
+    "max": 5750
   },
   "test_url": "https://www.google.com/generate_204",
   "veterans": 69,

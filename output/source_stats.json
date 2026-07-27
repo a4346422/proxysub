@@ -1,5 +1,5 @@
 {
-  "total_nodes": 30316,
+  "total_nodes": 30408,
   "total_alive": 60,
   "sources": [
     {
@@ -7,42 +7,49 @@
       "nodes": 1,
       "alive": 1,
       "alive_rate": 100.0,
-      "avg_latency_ms": 782
+      "avg_latency_ms": 1326
     },
     {
       "source": "Pawdroid/Free-servers:sub",
-      "nodes": 10,
-      "alive": 3,
-      "alive_rate": 30.0,
-      "avg_latency_ms": 1730
+      "nodes": 12,
+      "alive": 2,
+      "alive_rate": 16.667,
+      "avg_latency_ms": 763
+    },
+    {
+      "source": "ermaozi/get_subscribe:v2ray.txt",
+      "nodes": 15,
+      "alive": 1,
+      "alive_rate": 6.667,
+      "avg_latency_ms": 4644
     },
     {
       "source": "peasoft/NoMoreWalls:list_raw.txt",
-      "nodes": 48,
-      "alive": 1,
-      "alive_rate": 2.083,
+      "nodes": 53,
+      "alive": 2,
+      "alive_rate": 3.774,
       "avg_latency_ms": null
     },
     {
       "source": "free-nodes/v2rayfree:v202607271",
-      "nodes": 447,
-      "alive": 2,
-      "alive_rate": 0.447,
+      "nodes": 445,
+      "alive": 1,
+      "alive_rate": 0.225,
       "avg_latency_ms": null
     },
     {
       "source": "Leon406/SubCrawler:vless",
-      "nodes": 24673,
+      "nodes": 24755,
       "alive": 52,
-      "alive_rate": 0.211,
-      "avg_latency_ms": 680
+      "alive_rate": 0.21,
+      "avg_latency_ms": 871
     },
     {
       "source": "mahdibland/V2RayAggregator:sub_merge_base64.txt",
       "nodes": 4605,
       "alive": 1,
       "alive_rate": 0.022,
-      "avg_latency_ms": 417
+      "avg_latency_ms": 582
     },
     {
       "source": "anaer/Sub:clash.yaml",
@@ -87,13 +94,6 @@
       "avg_latency_ms": null
     },
     {
-      "source": "ermaozi/get_subscribe:v2ray.txt",
-      "nodes": 15,
-      "alive": 0,
-      "alive_rate": 0.0,
-      "avg_latency_ms": 1632
-    },
-    {
       "source": "ripaojiedian/freenode:sub",
       "nodes": 14,
       "alive": 0,
@@ -108,15 +108,15 @@
       "avg_latency_ms": null
     },
     {
-      "source": "freefq/free:v2",
-      "nodes": 6,
+      "source": "Pawdroid/Free-servers:sub_en",
+      "nodes": 9,
       "alive": 0,
       "alive_rate": 0.0,
       "avg_latency_ms": null
     },
     {
-      "source": "Pawdroid/Free-servers:sub_en",
-      "nodes": 4,
+      "source": "freefq/free:v2",
+      "nodes": 6,
       "alive": 0,
       "alive_rate": 0.0,
       "avg_latency_ms": null
