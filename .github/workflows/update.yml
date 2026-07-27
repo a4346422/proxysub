@@ -11,7 +11,7 @@ on:
       batch_size:
         description: '每批 socks 入站数'
         required: false
-        default: '300'
+        default: '100'
       probe_timeout:
         description: '测活超时（秒）'
         required: false
@@ -19,7 +19,7 @@ on:
       probe_workers:
         description: '测活并发'
         required: false
-        default: '250'
+        default: '100'
       tcp_chunk:
         description: 'TCP 预筛分片大小'
         required: false
@@ -66,9 +66,9 @@ jobs:
     timeout-minutes: 45
 
     env:
-      BATCH_SIZE: ${{ github.event.inputs.batch_size || '300' }}
+      BATCH_SIZE: ${{ github.event.inputs.batch_size || '100' }}
       PROBE_TIMEOUT: ${{ github.event.inputs.probe_timeout || '8' }}
-      PROBE_WORKERS: ${{ github.event.inputs.probe_workers || '250' }}
+      PROBE_WORKERS: ${{ github.event.inputs.probe_workers || '100' }}
       TCP_WORKERS: '400'
       TCP_CHUNK: ${{ github.event.inputs.tcp_chunk || '2000' }}
       # 兜底：源突然暴涨时按轮次偏移抽样，避免跑超 timeout-minutes。

@@ -17,6 +17,7 @@ from to_link import to_link
 ROOT = Path(__file__).parent
 TEMP = ROOT / "temp"
 OUT = Path(os.environ.get("OUTPUT_DIR") or (ROOT.parent / "output"))
+COUNTRY_PRIORITY = {"HK": 0, "JP": 1, "SG": 2, "US": 3}
 
 
 def country_label(n):
@@ -32,8 +33,21 @@ def country_label(n):
     return f"{cc} {name}" if name != cc else cc
 
 
+def output_sort_key(n):
+    """按国家分组输出：HK/JP/SG/US 优先，同国家内按上游节点名排序。"""
+    cc = (n.get("country_code") or "").upper()
+    if not cc or cc in ("?", "UNKNOWN"):
+        country_key = (2, "ZZ")
+    elif cc in COUNTRY_PRIORITY:
+        country_key = (0, COUNTRY_PRIORITY[cc])
+    else:
+        country_key = (1, cc)
+    name = str(n.get("name") or "").casefold()
+    return (*country_key, name, n.get("latency_ms", 999999))
+
+
 def build_names(nodes):
-    """生成节点名，同国家按延迟顺序编号：US 美国1 / US 美国2 …
+    """生成节点名，同国家按当前输出顺序编号：US 美国1 / US 美国2 …
 
     单个国家只有一个节点时也带 1，保证命名规则一致、便于客户端排序。
     """
@@ -188,10 +202,10 @@ def main():
         print("缺 temp/alive.json，先跑 check_alive.py")
         return 1
     nodes = json.loads(src.read_text(encoding="utf-8"))
-    nodes.sort(key=lambda n: n.get("latency_ms", 999999))
+    nodes.sort(key=output_sort_key)
     OUT.mkdir(parents=True, exist_ok=True)
 
-    # 同国家按延迟顺序编号（US 美国1 / US 美国2 …），
+    # 同国家分组后编号（HK/JP/SG/US 优先，同国家内按上游节点名排序），
     # 编号本身即保证了 Clash/sing-box 要求的名称唯一
     names = build_names(nodes)
 
@@ -213,6 +227,7 @@ def main():
 
     pool = TEMP / "nodes_all.json"
     pool_n = len(json.loads(pool.read_text(encoding="utf-8"))) if pool.exists() else 0
+    latencies = [n["latency_ms"] for n in nodes if "latency_ms" in n]
     status = {
         "updated_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
         "updated_ts": int(time.time()),
@@ -227,8 +242,8 @@ def main():
         "by_proto": {p: sum(1 for n in nodes if n["proto"] == p)
                      for p in sorted({n["proto"] for n in nodes})},
         "latency_ms": {
-            "min": nodes[0]["latency_ms"] if nodes else None,
-            "max": nodes[-1]["latency_ms"] if nodes else None,
+            "min": min(latencies) if latencies else None,
+            "max": max(latencies) if latencies else None,
         },
         "test_url": os.environ.get("TEST_URL",
                                    "https://www.google.com/generate_204"),

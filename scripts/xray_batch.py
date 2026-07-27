@@ -17,8 +17,8 @@ TEMP = ROOT / "temp"
 XRAY = Path(os.environ.get("XRAY_BIN") or (ROOT.parent / "bin" / "xray"))
 
 BASE_PORT = int(os.environ.get("BASE_PORT", 20001))
-# 300 来自实测：批300/并发250 = 13.3 节点/秒，批150/并发60 只有 4.4
-BATCH_SIZE = int(os.environ.get("BATCH_SIZE", 300))
+# 默认 100 来自全量实测：比 90 更稳，比 150/200 更能保留存活节点。
+BATCH_SIZE = int(os.environ.get("BATCH_SIZE", 100))
 
 # Windows 专有，Linux runner 上必须为 0
 _NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)

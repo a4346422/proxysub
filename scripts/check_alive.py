@@ -19,12 +19,11 @@ ROOT = Path(__file__).parent
 TEMP = ROOT / "temp"
 
 # 全部可由 workflow env / workflow_dispatch inputs 覆盖
-# 并发默认值来自实测：批300/并发250 达 13.3 节点/秒，是批150/并发60 的 3 倍，
-# 且命中数不变（无假阴性）。3 万节点的池必须靠这个速率才能压进 25 分钟超时。
+# 默认值来自全量实测：批100/并发100 在命中数和时间预算之间更稳定。
 TEST_URL = os.environ.get("TEST_URL", "https://www.google.com/generate_204")
 TIMEOUT = int(os.environ.get("PROBE_TIMEOUT", 8))
 RETRY = int(os.environ.get("PROBE_RETRY", 1))
-WORKERS = int(os.environ.get("PROBE_WORKERS", 250))
+WORKERS = int(os.environ.get("PROBE_WORKERS", 100))
 
 TCP_TIMEOUT = int(os.environ.get("TCP_TIMEOUT", 4))
 TCP_WORKERS = int(os.environ.get("TCP_WORKERS", 400))

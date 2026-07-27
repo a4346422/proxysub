@@ -47,9 +47,9 @@ EXP_SAMPLE=2000 python exp_tcp_filter.py
 
 ### 一次启核测 N 个节点
 
-`xray_batch.py` 是整个流程的基础设施。它生成一份含 N 个 socks 入站 + N 个出站的 Xray 配置，用 routing rule 把 `inN` 绑到 `outN`，于是**一次启核就能并发探测 300 个节点**（`BATCH_SIZE`），避免几万次内核启停。测活时 `curl --socks5-hostname 127.0.0.1:<port>` 打哪个端口就是在测哪个节点。
+`xray_batch.py` 是整个流程的基础设施。它生成一份含 N 个 socks 入站 + N 个出站的 Xray 配置，用 routing rule 把 `inN` 绑到 `outN`，于是**一次启核就能并发探测 100 个节点**（默认 `BATCH_SIZE=100`），避免几万次内核启停。测活时 `curl --socks5-hostname 127.0.0.1:<port>` 打哪个端口就是在测哪个节点。
 
-这个设计有个致命脆弱点：**一个非法出站会让整份配置加载失败，整批 300 个节点全部误报为 0 存活**。曾因单个 h2 节点导致 8 个批次连续全灭。防护是两层，改 `xray_batch.py` 时不要动：
+这个设计有个致命脆弱点：**一个非法出站会让整份配置加载失败，整批节点全部误报为 0 存活**。曾因单个 h2 节点导致 8 个批次连续全灭。防护是两层，改 `xray_batch.py` 时不要动：
 
 - `config_ok()` 用 `xray -test` 预校验，`drop_bad_outbounds()` 解析报错里的 `tag outN` 定位并摘掉肇事节点。注意 `outN` 的 N 是 mapping 下标，**必须映射回实际节点对象再按身份过滤**，按列表下标删会因删除后位移而误删好节点。
 - `SS_CIPHERS` 白名单（xray 已移除 CFB/CTR/RC4）、`_stream_settings()` 对 `net in ("h2","http")` 返回 `None`（Xray 26.x 移除了 h2 transport，迁到 XHTTP）。返回 `None` 后调用方必须一并返回 `None`，否则节点会静默退化成明文 TCP 产生假结果。
@@ -86,7 +86,7 @@ EXP_SAMPLE=2000 python exp_tcp_filter.py
 
 ### 节点命名
 
-节点名**只保留实测出口的国家码 + 国家名 + 同国编号**（`US 美国1`、`TR 土耳其1`），上游原名全部丢弃 —— 因为原名的国家标注大量不实（实测"荷兰"出口在美国、"香港"在土耳其）。`check_ip.py` 经节点自身的 socks 端口查 ip-api/ipinfo 拿真实落地。编号按延迟升序，编号本身即保证 Clash/sing-box 要求的名称唯一。查询失败记 `UNKNOWN`，不猜测。
+节点名**只保留实测出口的国家码 + 国家名 + 同国编号**（`US 美国1`、`TR 土耳其1`），上游原名全部丢弃 —— 因为原名的国家标注大量不实（实测"荷兰"出口在美国、"香港"在土耳其）。`check_ip.py` 经节点自身的 socks 端口查 ip-api/ipinfo 拿真实落地。输出排序按 HK/JP/SG/US 优先，其余国家按国家码排序，未知国家最后；同国家内按上游节点名排序后编号。编号本身即保证 Clash/sing-box 要求的名称唯一。查询失败记 `UNKNOWN`，不猜测。
 
 `check_ip.py` 的 `IP_WORKERS` 默认 3 而非更高：查询走节点自身带宽，并发 6 时 7/19 查不到，降到 3 后 15/19。
 
