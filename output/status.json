@@ -1,36 +1,32 @@
 {
-  "updated_at": "2026-07-26 22:54:23 UTC",
-  "updated_ts": 1785106463,
-  "pool": 30279,
-  "alive": 69,
-  "links": 69,
+  "updated_at": "2026-07-27 02:06:09 UTC",
+  "updated_ts": 1785117969,
+  "pool": 30315,
+  "alive": 60,
+  "links": 60,
   "by_country": {
     "?": 2,
     "AT": 1,
-    "CH": 1,
     "CZ": 2,
-    "DE": 3,
+    "DE": 2,
     "FI": 3,
     "HU": 1,
     "IE": 1,
     "JP": 1,
     "PL": 1,
-    "RU": 1,
     "SG": 2,
     "TH": 4,
     "TR": 38,
-    "TW": 2,
-    "US": 6
+    "US": 2
   },
-  "exit_ips": 28,
+  "exit_ips": 20,
   "by_proto": {
     "ss": 2,
-    "trojan": 1,
-    "vless": 66
+    "vless": 58
   },
   "latency_ms": {
-    "min": 368,
-    "max": 7140
+    "min": 417,
+    "max": 4550
   },
   "test_url": "https://www.google.com/generate_204",
   "veterans": 69,
