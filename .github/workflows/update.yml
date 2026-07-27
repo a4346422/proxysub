@@ -36,10 +36,14 @@ on:
         description: '增量模式：先复测老兵再探索新节点（0=全量重跑）'
         required: false
         default: '1'
+      dry_run:
+        description: '只运行不提交 output（实验用，1=开启）'
+        required: false
+        default: '0'
 
-# 同一时间只跑一个，避免调度堆积时并发 push 冲突
+# dry-run 实验按参数分组并行；正式更新仍共享一组，避免并发 push 冲突
 concurrency:
-  group: update-sub
+  group: ${{ github.event.inputs.dry_run == '1' && format('update-sub-dry-{0}', github.event.inputs.tcp_chunk || 'default') || 'update-sub' }}
   cancel-in-progress: false
 
 permissions:
@@ -156,7 +160,7 @@ jobs:
         # 存活的唯一途径，runner 每轮都是全新容器。
         # 注意：sanity 判定跳过提交时名单更新也会丢弃。这是有意的：那种情况
         # 通常是 runner 网络异常导致全灭，此时的 miss 计数不可信，丢掉更安全。
-        if: steps.sanity.outputs.commit == 'true'
+        if: steps.sanity.outputs.commit == 'true' && github.event.inputs.dry_run != '1'
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
