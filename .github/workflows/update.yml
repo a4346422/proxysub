@@ -2,10 +2,10 @@ name: Update Subscription
 
 on:
   schedule:
-    # 每 2 小时一次。单轮约 35 分钟，小时级已不会与下轮重叠；
-    # 改为 2h 降低 Actions 耗时/队列。取 17 分而非整点：整点排队最重，
-    # 且 schedule 本身有 10-30 分钟抖动（GitHub 不保证准时）。
-    - cron: '17 */2 * * *'
+    # 每小时。单轮约 35 分钟（预筛复查后待测节点翻倍），30 分钟间隔会持续
+    # 重叠、被 concurrency 挤压。取 17 分而非整点：Actions 整点排队最重，
+    # 且调度本身有 10-30 分钟抖动（GitHub 不保证准时）。
+    - cron: '17 * * * *'
   workflow_dispatch:
     inputs:
       batch_size:
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     # 45 分钟：TCP 预筛加了分片+复查后可达数从 7.5k 涨到 17k（修掉了大规模
     # 并发下约 55 个可用节点的误杀），代价是单轮约 35 分钟。公开库分钟数无
-    # 上限；现 cron 每 2h + concurrency 串行化，不会与下轮重叠。
+    # 上限，且 cron 间隔 30min + concurrency 串行化，长跑只是等更久。
     timeout-minutes: 45
 
     env:
@@ -74,7 +74,7 @@ jobs:
       # 兜底：源突然暴涨时按轮次偏移抽样，避免跑超 timeout-minutes。
       # 3 万节点实测 16.8 分钟，留出余量设 32000。
       MAX_NODES: '32000'
-      # 每轮用 run_number 作抽样偏移，超限时后面的源也能轮到
+      # 每小时轮换抽样起点，让超限时后面的源也能轮到
       ROUND_SEED: ${{ github.run_number }}
       # 增量模式：A 段先复测 output/veterans.json 里的老兵（几十秒出一份
       # 可用订阅垫底），B 段再探索新节点。设 0 退回全量重跑。
@@ -84,11 +84,6 @@ jobs:
       PROBE_BUDGET_SEC: '1920'
       TEST_URL: ${{ github.event.inputs.test_url || 'https://www.google.com/generate_204' }}
       MIN_ALIVE_TO_COMMIT: '1'
-      # 少而稳：延迟2000 + 出口/集群去重 + 结构排序 + 上限60（不裁 veterans）
-      LATENCY_MAX_MS: '2000'
-      MAX_OUTPUT_NODES: '60'
-      DEDUP_EXIT_IP: '1'
-      DEDUP_CLUSTER: '1'
       # 查出口 IP / 真实国家。设 0 可关闭（节省约 1-2 分钟）
       CHECK_IP: ${{ github.event.inputs.check_ip || '1' }}
       VET_ONLY: ${{ github.event.inputs.vet_only || '0' }}
