@@ -2,10 +2,10 @@ name: Update Subscription
 
 on:
   schedule:
-    # 每小时。单轮约 35 分钟（预筛复查后待测节点翻倍），30 分钟间隔会持续
-    # 重叠、被 concurrency 挤压。取 17 分而非整点：Actions 整点排队最重，
-    # 且调度本身有 10-30 分钟抖动（GitHub 不保证准时）。
-    - cron: '17 * * * *'
+    # 每 2 小时一次。单轮约 35 分钟，小时级已不会与下轮重叠；
+    # 改为 2h 降低 Actions 耗时/队列。取 17 分而非整点：整点排队最重，
+    # 且 schedule 本身有 10-30 分钟抖动（GitHub 不保证准时）。
+    - cron: '17 */2 * * *'
   workflow_dispatch:
     inputs:
       batch_size:
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     # 45 分钟：TCP 预筛加了分片+复查后可达数从 7.5k 涨到 17k（修掉了大规模
     # 并发下约 55 个可用节点的误杀），代价是单轮约 35 分钟。公开库分钟数无
-    # 上限，且 cron 间隔 30min + concurrency 串行化，长跑只是等更久。
+    # 上限；现 cron 每 2h + concurrency 串行化，不会与下轮重叠。
     timeout-minutes: 45
 
     env:

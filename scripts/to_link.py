@@ -67,6 +67,9 @@ def to_link(n, name=None):
         return "vmess://" + _b64(json.dumps(c, ensure_ascii=False,
                                             separators=(",", ":")))
     if p == "vless":
+        # 与 formats 一致：Reality 缺 pbk 无法构造可用链接
+        if str(n.get("tls") or "").lower() == "reality" and not str(n.get("pbk") or "").strip():
+            return None
         return (f"vless://{n['id']}@{n['addr']}:{n['port']}?"
                 f"{_q(n, {'encryption': 'none'})}#{urllib.parse.quote(nm)}")
     if p == "trojan":

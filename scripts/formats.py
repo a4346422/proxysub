@@ -2,6 +2,9 @@
 
 取代原 build_sub.py：去掉 IP 纯净度（trust）相关字段与主备清单分级。
 Clash / sing-box 的字段映射与 clash_parse.py:convert() 互为逆向。
+
+Reality 导出补全 reality-opts / utls；缺 pbk 的 Reality 整节点丢弃。
+不做延迟/条数等质量门禁，测活通过即尽量全量输出。
 """
 import base64
 import json
@@ -63,14 +66,36 @@ def _tls_on(n):
     return str(n.get("tls") or "").lower() in ("tls", "reality", "xtls", "true")
 
 
+def _is_reality(n):
+    return str(n.get("tls") or "").lower() == "reality"
+
+
+def _reality_exportable(n):
+    """Reality 无 public key 时无法在 Clash/sing-box/链接里完整表达，整节点丢弃。"""
+    if not _is_reality(n):
+        return True
+    return bool(str(n.get("pbk") or "").strip())
+
+
+def _fingerprint(n):
+    return str(n.get("fp") or "").strip() or "chrome"
+
+
 def to_clash(n, name):
-    """节点 dict → Clash proxy dict；不支持返回 None"""
+    """节点 dict → Clash / Mihomo proxy dict；不支持返回 None。
+
+    Reality 必须带 reality-opts.public-key / short-id，以及 client-fingerprint，
+    否则 meta 内核无法握手（Xray 测活能过、Clash 订阅却全挂）。
+    """
     p = n["proto"]
     net = str(n.get("net") or "tcp")
     if net == "gun":
         net = "grpc"
     # Clash 不支持 h2/http 传输的这些免费节点组合，且 xray 26 已移除
     if net in ("h2", "http"):
+        return None
+    # Reality 缺 pbk 会退化成假 TLS，直接丢弃
+    if not _reality_exportable(n):
         return None
 
     c = {"name": name, "server": n["addr"], "port": int(n["port"])}
@@ -95,6 +120,25 @@ def to_clash(n, name):
         sni = n.get("sni") or n.get("host")
         if sni:
             c["servername"] = str(sni).split(",")[0]
+        if _is_reality(n):
+            # Mihomo / Clash Meta 字段名
+            c["client-fingerprint"] = _fingerprint(n)
+            ro = {}
+            if n.get("pbk"):
+                ro["public-key"] = str(n["pbk"])
+            # short-id 允许空字符串（部分服务端如此配置）
+            if n.get("sid") is not None and str(n.get("sid")) != "":
+                ro["short-id"] = str(n["sid"])
+            elif n.get("sid") == "":
+                ro["short-id"] = ""
+            if n.get("pbk"):
+                c["reality-opts"] = ro
+        elif n.get("fp"):
+            c["client-fingerprint"] = _fingerprint(n)
+        alpn = str(n.get("alpn") or "").strip()
+        if alpn:
+            c["alpn"] = [x.strip() for x in alpn.split(",") if x.strip()]
+
     if net != "tcp":
         c["network"] = net
     if net == "ws":
@@ -109,10 +153,15 @@ def to_clash(n, name):
 
 
 def to_singbox(n, name):
-    """节点 dict → sing-box outbound dict；不支持返回 None"""
+    """节点 dict → sing-box outbound dict；不支持返回 None。
+
+    Reality 走 tls.reality + utls，与官方字段对齐。
+    """
     p = n["proto"]
     net = str(n.get("net") or "tcp")
     if net in ("h2", "http"):
+        return None
+    if not _reality_exportable(n):
         return None
 
     o = {"tag": name, "server": n["addr"], "server_port": int(n["port"])}
@@ -137,6 +186,20 @@ def to_singbox(n, name):
         sni = n.get("sni") or n.get("host")
         if sni:
             tls["server_name"] = str(sni).split(",")[0]
+        alpn = str(n.get("alpn") or "").strip()
+        if alpn:
+            tls["alpn"] = [x.strip() for x in alpn.split(",") if x.strip()]
+        if _is_reality(n):
+            tls["insecure"] = False  # reality 不依赖系统 CA
+            tls["utls"] = {"enabled": True, "fingerprint": _fingerprint(n)}
+            reality = {"enabled": True}
+            if n.get("pbk"):
+                reality["public_key"] = str(n["pbk"])
+            if n.get("sid") is not None:
+                reality["short_id"] = str(n.get("sid") or "")
+            tls["reality"] = reality
+        elif n.get("fp"):
+            tls["utls"] = {"enabled": True, "fingerprint": _fingerprint(n)}
         o["tls"] = tls
     if net == "ws":
         t = {"type": "ws", "path": str(n.get("path") or "/")}
@@ -202,6 +265,11 @@ def main():
         print("缺 temp/alive.json，先跑 check_alive.py")
         return 1
     nodes = json.loads(src.read_text(encoding="utf-8"))
+    # 缺 pbk 的 Reality 无法完整导出，从全量订阅中剔除（不做延迟/条数门禁）
+    dropped_reality = [n for n in nodes if not _reality_exportable(n)]
+    if dropped_reality:
+        nodes = [n for n in nodes if _reality_exportable(n)]
+        print(f"  丢弃缺 pbk 的 Reality {len(dropped_reality)} 个（无法完整导出）")
     nodes.sort(key=output_sort_key)
     OUT.mkdir(parents=True, exist_ok=True)
 
@@ -240,7 +308,7 @@ def main():
                                          for n in nodes})},
         "exit_ips": len({n["exit_ip"] for n in nodes if n.get("exit_ip")}),
         "by_proto": {p: sum(1 for n in nodes if n["proto"] == p)
-                     for p in sorted({n["proto"] for n in nodes})},
+                     for p in sorted({n["proto"] for n in nodes})} if nodes else {},
         "latency_ms": {
             "min": min(latencies) if latencies else None,
             "max": max(latencies) if latencies else None,
@@ -251,7 +319,8 @@ def main():
         "veterans": len(json.loads((OUT / "veterans.json").read_text(
             encoding="utf-8")).get("nodes", []))
         if (OUT / "veterans.json").exists() else 0,
-        "note": "alive = 经节点实际请求 test_url 返回 204 的节点数",
+        "drop_reality_no_pbk": len(dropped_reality),
+        "note": "alive = 经节点实际请求 test_url 返回 204 且可完整导出的节点数",
     }
     (OUT / "status.json").write_text(
         json.dumps(status, ensure_ascii=False, indent=2), encoding="utf-8")
