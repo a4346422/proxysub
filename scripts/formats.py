@@ -313,15 +313,25 @@ def main():
             "min": min(latencies) if latencies else None,
             "max": max(latencies) if latencies else None,
         },
-        "test_url": os.environ.get("TEST_URL",
-                                   "https://www.google.com/generate_204"),
         # 老兵名单规模：跨轮沉淀的稳定节点数，反映增量调度的积累效果
         "veterans": len(json.loads((OUT / "veterans.json").read_text(
             encoding="utf-8")).get("nodes", []))
         if (OUT / "veterans.json").exists() else 0,
         "drop_reality_no_pbk": len(dropped_reality),
-        "note": "alive = 经节点实际请求 test_url 返回 204 且可完整导出的节点数",
+        "note": "alive = 经节点实际请求 test_urls 任一返回 204 且可完整导出的节点数",
     }
+    raw_urls = (os.environ.get("TEST_URLS") or "").strip()
+    if raw_urls:
+        test_urls = [u.strip() for u in raw_urls.split(",") if u.strip()]
+    else:
+        single = (os.environ.get("TEST_URL") or "").strip()
+        test_urls = [single] if single else [
+            "https://www.google.com/generate_204",
+            "https://www.gstatic.com/generate_204",
+            "https://cp.cloudflare.com/generate_204",
+        ]
+    status["test_urls"] = test_urls
+    status["test_url"] = test_urls[0] if test_urls else ""
     (OUT / "status.json").write_text(
         json.dumps(status, ensure_ascii=False, indent=2), encoding="utf-8")
 

@@ -1,4 +1,7 @@
-"""并发测活：经每个节点自己的 socks 端口请求 google/generate_204，判 204 + 延迟。
+"""并发测活：经每个节点自己的 socks 端口请求 generate_204，判 204 + 延迟。
+
+默认多源短路 OR（Google / gstatic / Cloudflare）：任一返回 204 即存活，
+避免单一测活域名被出口干扰导致误杀。
 
 用 curl 而非 Python 的 socks 库，避免额外依赖（PySocks），且 curl 对
 socks5h 的 DNS 远端解析支持更可靠。
@@ -20,7 +23,33 @@ TEMP = ROOT / "temp"
 
 # 全部可由 workflow env / workflow_dispatch inputs 覆盖
 # 默认值来自全量实测：批100/并发100 在命中数和时间预算之间更稳定。
-TEST_URL = os.environ.get("TEST_URL", "https://www.google.com/generate_204")
+DEFAULT_TEST_URLS = [
+    "https://www.google.com/generate_204",
+    "https://www.gstatic.com/generate_204",
+    "https://cp.cloudflare.com/generate_204",
+]
+
+
+def _parse_test_urls():
+    """解析测活 URL 列表。
+
+    优先 TEST_URLS（逗号分隔）；否则回退单源 TEST_URL；再否则用默认三源。
+    判定策略：短路 OR，任一源返回 HTTP 204 即通过。
+    """
+    raw = (os.environ.get("TEST_URLS") or "").strip()
+    if raw:
+        urls = [u.strip() for u in raw.split(",") if u.strip()]
+        if urls:
+            return urls
+    single = (os.environ.get("TEST_URL") or "").strip()
+    if single:
+        return [single]
+    return list(DEFAULT_TEST_URLS)
+
+
+TEST_URLS = _parse_test_urls()
+# 兼容旧逻辑/日志：主 URL 取列表首项
+TEST_URL = TEST_URLS[0]
 TIMEOUT = int(os.environ.get("PROBE_TIMEOUT", 8))
 RETRY = int(os.environ.get("PROBE_RETRY", 1))
 WORKERS = int(os.environ.get("PROBE_WORKERS", 100))
@@ -102,8 +131,9 @@ def prefilter_tcp(nodes):
     return kept
 
 
-def probe(port, url=TEST_URL, timeout=TIMEOUT):
+def probe(port, url=None, timeout=TIMEOUT):
     """返回 (ok, latency_ms, http_code)。socks5h = 让代理端做 DNS 解析"""
+    url = url or TEST_URL
     cmd = ["curl", "-s", "-o", os.devnull,
            "-w", "%{http_code} %{time_total}",
            "--socks5-hostname", f"127.0.0.1:{port}",
@@ -119,13 +149,21 @@ def probe(port, url=TEST_URL, timeout=TIMEOUT):
 
 
 def probe_retry(port):
-    for attempt in range(RETRY + 1):
-        ok, ms, code = probe(port)
-        if ok:
-            return ok, ms, code
-        if attempt < RETRY:
-            time.sleep(0.2)
-    return False, 0, code
+    """多源短路 OR：按 TEST_URLS 顺序尝试，任一 204 即通过。
+
+    返回 (ok, latency_ms, http_code, hit_url)。
+    死节点最坏会把所有源各试 RETRY+1 次；活节点通常第一源即返回。
+    """
+    last_code = "000"
+    for url in TEST_URLS:
+        for attempt in range(RETRY + 1):
+            ok, ms, code = probe(port, url=url)
+            last_code = code
+            if ok:
+                return True, ms, code, url
+            if attempt < RETRY:
+                time.sleep(0.2)
+    return False, 0, last_code, None
 
 
 def run_batch(nodes, batch_no, total_batches, diag_keys=None):
@@ -154,10 +192,12 @@ def run_batch(nodes, batch_no, total_batches, diag_keys=None):
     try:
         with ThreadPoolExecutor(max_workers=WORKERS) as ex:
             results = list(ex.map(lambda pn: probe_retry(pn[0]), mapping))
-        for (port, n), (ok, ms, code) in zip(mapping, results):
+        for (port, n), (ok, ms, code, hit_url) in zip(mapping, results):
             if ok:
                 rec = dict(n)
                 rec["latency_ms"] = ms
+                if hit_url:
+                    rec["probe_url"] = hit_url
                 alive.append(rec)
     finally:
         xb.stop_xray(proc)
@@ -195,7 +235,10 @@ def main():
 
     t0 = time.time()
     pool_n = len(nodes)
-    print(f"测活目标 {TEST_URL}，超时 {TIMEOUT}s，重试 {RETRY} 次")
+    print(f"测活目标 {len(TEST_URLS)} 源（短路 OR，任一 204 即通过），"
+          f"超时 {TIMEOUT}s，每源重试 {RETRY} 次")
+    for u in TEST_URLS:
+        print(f"  - {u}")
     print(f"老兵诊断: 名单 {len(all_vets)} 个，本轮采集池命中 "
           f"{len(pool_vet_keys)} 个")
     if VET_B_PATH:

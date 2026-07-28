@@ -24,8 +24,12 @@ on:
         description: 'TCP 预筛分片大小'
         required: false
         default: '2000'
+      test_urls:
+        description: '测活多源 URL（逗号分隔，任一 204 即通过）'
+        required: false
+        default: 'https://www.google.com/generate_204,https://www.gstatic.com/generate_204,https://cp.cloudflare.com/generate_204'
       test_url:
-        description: '测活目标 URL'
+        description: '兼容单源；未设 test_urls 时使用'
         required: false
         default: 'https://www.google.com/generate_204'
       check_ip:
@@ -82,6 +86,7 @@ jobs:
       # B 段时间预算 32 分钟：到点停在当前批次，把已测出的交出去。
       # 后面还要 check_ip(~2min) + formats + 提交，45 分钟 timeout 留足余量。
       PROBE_BUDGET_SEC: '1920'
+      TEST_URLS: ${{ github.event.inputs.test_urls || 'https://www.google.com/generate_204,https://www.gstatic.com/generate_204,https://cp.cloudflare.com/generate_204' }}
       TEST_URL: ${{ github.event.inputs.test_url || 'https://www.google.com/generate_204' }}
       MIN_ALIVE_TO_COMMIT: '1'
       # 查出口 IP / 真实国家。设 0 可关闭（节省约 1-2 分钟）

@@ -29,7 +29,13 @@ def main():
     print(f"| 延迟范围 | {lat.get('min')} ~ {lat.get('max')} ms |")
     print(f"| 更新时间 | {s.get('updated_at')} |")
     print(f"| 已提交 | {os.environ.get('COMMITTED', 'n/a')} |")
-    print(f"\n存活判定：经节点实际请求 `{s.get('test_url')}` 返回 204。")
+    urls = s.get("test_urls") or ([s["test_url"]] if s.get("test_url") else [])
+    if len(urls) > 1:
+        print("\n存活判定：经节点实际请求以下**任一** URL 返回 204：")
+        for u in urls:
+            print(f"- `{u}`")
+    else:
+        print(f"\n存活判定：经节点实际请求 `{urls[0] if urls else '?'}` 返回 204。")
 
     if not s.get("alive"):
         print("\n> 本次存活为 0，已跳过提交以保留上一次的可用订阅。")
