@@ -3,59 +3,46 @@ allow-lan: false
 mode: rule
 log-level: info
 proxies:
-- name: HK 香港1
-  server: hk1.cyphervpn.pro
-  port: 443
-  type: vless
-  uuid: 8bba3194-4856-46d1-8319-075817d87eb1
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: hk1.cyphervpn.pro
-  client-fingerprint: chrome
-  reality-opts:
-    public-key: USffNprEM08MHiuVy5bj6-kvxugxycuZcgQDFJyz2Wc
-    short-id: 8f9d033ad6d2cebf
-- name: SG 新加坡1
-  server: node-tw0.omhvp.co
-  port: 443
-  type: vless
-  uuid: a8f84171-5f96-4547-b621-59758fe668c8
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: www.singaporeair.com
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: jWVk2Z7eFkyDcu2xgzqX8JsPbZuCVhHUWD463Vfgazw
-    short-id: 7a5b89ecdb01f781
+- name: JP 日本1
+  server: 89.187.160.73
+  port: 1080
+  type: ss
+  cipher: chacha20-ietf-poly1305
+  password: XF0klw7870vXn3uQIxe19Q
 - name: US 美国1
-  server: 169.40.42.121
-  port: 443
+  server: 104.17.101.139
+  port: 2095
   type: vless
-  uuid: d65cc14c-f53f-4fe2-b262-97856601319c
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: yahoo.com
-  client-fingerprint: ios
-  reality-opts:
-    public-key: e2RLf57Li_-MDZGE9ss1BWPgP54mqRb5PfXhW2jcVVg
-    short-id: c39cc7310a
-  network: raw
+  uuid: 86c50e3a-5b87-49dd-bd20-03c7f2735e40
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: fangbinxingnmsl.pusytroller.gq
 - name: US 美国2
-  server: usa24.tcpnet.fun
-  port: 443
+  server: 104.25.118.238
+  port: 80
   type: vless
-  uuid: 218fd696-e3a2-4c33-b397-a5f13a82969e
-  tls: true
-  skip-cert-verify: true
-  servername: usa24.tcpnet.fun
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: Z4AlsTFXv79aaFZOJebC50J6pgIHR_gdZ091JpKhUBo
-    short-id: 08bf0ad0
+  uuid: 6cd78ec7-b715-471c-92b4-0c3842caea4b
+  network: ws
+  ws-opts:
+    path: /eyJqdW5rIjoiOFRwTjlPWHgiLCJwcm90b2NvbCI6InZsIiwibW9kZSI6InByZWZpeCIsInBhbmVsSVBzIjpbIlsyNjAyOmZjNTk6YjA6NjQ6Ol0iXX0=
+    headers:
+      Host: billowing-cloud-d339.sospanel.workers.dev
 - name: US 美国3
+  server: 165.140.216.142
+  port: 443
+  type: vmess
+  uuid: b65a2d69-5634-42a2-e4be-54e8a6176900
+  alterId: 0
+  cipher: auto
+- name: US 美国4
+  server: 194.124.229.135
+  port: 1080
+  type: ss
+  cipher: chacha20-ietf-poly1305
+  password: XF0klw7870vXn3uQIxe19Q
+- name: US 美国5
   server: 198.23.238.35
   port: 443
   type: vless
@@ -68,7 +55,7 @@ proxies:
   reality-opts:
     public-key: M4KRLRGcJGhJScjCv3JinHE0Da9s79Ku7GlVFSNsTVY
     short-id: a61500e1
-- name: US 美国4
+- name: US 美国6
   server: us1.mifbot.pro
   port: 443
   type: vless
@@ -81,19 +68,24 @@ proxies:
   reality-opts:
     public-key: Jpmm2Xjanq6p0n9EPshmmR8yjuO38NW3280_zCK3XSs
     short-id: f0bde8d1c9247efe
-- name: BG 保加利亚1
-  server: 185.82.219.152
+- name: US 美国7
+  server: 78.111.89.171
   port: 443
   type: vless
-  uuid: fc1b3bda-b226-452a-8c5c-b0e36a1f8f88
-  flow: xtls-rprx-vision
+  uuid: 0370b162-baff-4757-86cc-cce4bf07f6f1
   tls: true
   skip-cert-verify: true
-  servername: eu-central.cendora.ru
-  client-fingerprint: qq
+  servername: www.cloudflare.com
+  client-fingerprint: chrome
   reality-opts:
-    public-key: b-Cm9hX-3UHsS1L_lnUB6AMjuKhlN1IDdBbZ506itjI
-    short-id: 00bca5982f82d083
+    public-key: lYcMPEgf6ePmF_d8RXR5fsVorycW37v_ECl-fz_H6w4
+    short-id: cfe08c23a85f24
+- name: BG 保加利亚1
+  server: 146.70.53.62
+  port: 1080
+  type: ss
+  cipher: chacha20-ietf-poly1305
+  password: XF0klw7870vXn3uQIxe19Q
 - name: CA 加拿大1
   server: 45.206.5.122
   port: 443
@@ -108,6 +100,18 @@ proxies:
     public-key: pPi-WO8qQFFZ9UJWNLW9YClbjcoAAZWJQ2_FM3Kjhz8
     short-id: 500aec9e9e5e2212
 - name: CA 加拿大2
+  server: 68.168.116.6
+  port: 1080
+  type: ss
+  cipher: chacha20-ietf-poly1305
+  password: XF0klw7870vXn3uQIxe19Q
+- name: CA 加拿大3
+  server: 72.10.173.91
+  port: 1080
+  type: ss
+  cipher: chacha20-ietf-poly1305
+  password: XF0klw7870vXn3uQIxe19Q
+- name: CA 加拿大4
   server: 158.69.112.254
   port: 443
   type: vless
@@ -120,6 +124,30 @@ proxies:
   reality-opts:
     public-key: wo417FrFdjy7ZhccQ-VWGZEKcoCHSEfyWcJT1pIVc1Y
     short-id: 3d3c1e645f763ee3
+- name: CH 瑞士1
+  server: channel.tradeip.store
+  port: 8443
+  type: vless
+  uuid: t.me.TradeIP
+  flow: xtls-rprx-vision
+  tls: true
+  skip-cert-verify: true
+  servername: play.google.com
+  client-fingerprint: chrome
+  reality-opts:
+    public-key: HL-IrEO6_mXNGgiBztNWX0VY3nb-JQ3thK_7gFbk4Bg
+    short-id: c214
+- name: CH 瑞士2
+  server: best.kovira2.ir
+  port: 25026
+  type: ss
+  cipher: chacha20-ietf-poly1305
+  password: xp6qduya33bvl863
+- name: CO 哥伦比亚1
+  server: 158.247.123.142
+  port: 62145
+  type: vless
+  uuid: 8fb65472-5957-4f64-ba2d-b5812b2f155a
 - name: DE 德国1
   server: 159.195.45.129
   port: 443
@@ -134,60 +162,19 @@ proxies:
     public-key: dp-ncBuRHgZl5O80eHBYhSKo1i9qbt-J7MJ1alyWXmM
     short-id: 1991780b928b292d
 - name: DE 德国2
-  server: 159.195.46.178
+  server: 152.53.239.182
   port: 443
   type: vless
-  uuid: 859a537b-09cf-4bce-8da4-ecbb72950e3a
+  uuid: 711c018e-2692-4aa8-93f3-544d83fcd16c
   flow: xtls-rprx-vision
   tls: true
   skip-cert-verify: true
-  servername: 4.oncloudnineservicestreang.com
+  servername: www.cloudflare.com
   client-fingerprint: chrome
   reality-opts:
-    public-key: P5ceHLOW8Gmz45z-ozbm9T6xsdSsIGLB71-jMfSjCBQ
-    short-id: 04bc695105689674
+    public-key: HyVSZ2OyySwXT-xRhTAqoiuYflIaj_b0Jxm7S1Iq9hs
+    short-id: 7a76f3c4b9dd
 - name: DE 德国3
-  server: ge14.cyphervpn.pro
-  port: 443
-  type: vless
-  uuid: 8bba3194-4856-46d1-8319-075817d87eb1
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: ge14.cyphervpn.pro
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: CGrQMXFz6Qopcrvn3EIJnJwY-d_tQ4ahez7WQI8Z1Bk
-    short-id: 53f809e639280191
-- name: DE 德国4
-  server: my.up-connect.online
-  port: 443
-  type: vless
-  uuid: 06d44c57-8e1a-41f4-b9c4-65d35869e078
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: my.up-connect.online
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: OCLtjVdRxsou3429LRfjkDYgiAPs24TSgSeFZpChCEw
-    short-id: d67ec5a8fc40ebea
-- name: DE 德国5
-  server: 194.87.55.47
-  port: 443
-  type: vless
-  uuid: 2d7c8eef-49c0-4d89-a74f-591ea805274d
-  tls: true
-  skip-cert-verify: true
-  servername: yahoo.com
-  client-fingerprint: chrome
-  reality-opts:
-    public-key: dSKIQmSXKkmpXGcB9RCt320PmpuE92omqsVqdH351G8
-    short-id: ''
-  network: grpc
-  grpc-opts:
-    grpc-service-name: ''
-- name: DE 德国6
   server: 168.119.156.101
   port: 443
   type: vless
@@ -199,19 +186,17 @@ proxies:
   reality-opts:
     public-key: OncWhxWwzrKOFH21JT9WxcenacQuc7ZmuQy_rZFJ8xg
     short-id: c6e19c434dc87df7
-- name: DE 德国7
-  server: naran-de-ow.fizikade.ir
-  port: 443
+- name: DE 德国4
+  server: 164.92.143.135
+  port: 80
   type: vless
-  uuid: 7d4e9395-fcc7-40a1-998d-8d3ce447ce5c
-  tls: true
-  skip-cert-verify: true
-  servername: play.google.com
-  client-fingerprint: chrome
-  reality-opts:
-    public-key: o_RtnOmiXa68R3kEVnRDzpd12_gjWopPGmEaEFDXLDs
-    short-id: 46b05b
-- name: DE 德国8
+  uuid: f0e2e83d-d2b0-4e71-8da5-71306ad58e08
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: xU.aSaCO.sTorE
+- name: DE 德国5
   server: 62.60.216.204
   port: 443
   type: vless
@@ -224,7 +209,7 @@ proxies:
   reality-opts:
     public-key: b-Cm9hX-3UHsS1L_lnUB6AMjuKhlN1IDdBbZ506itjI
     short-id: 00bca5982f82d083
-- name: DE 德国9
+- name: DE 德国6
   server: tun.temas-bor.ir
   port: 443
   type: vless
@@ -236,33 +221,42 @@ proxies:
   reality-opts:
     public-key: OncWhxWwzrKOFH21JT9WxcenacQuc7ZmuQy_rZFJ8xg
     short-id: c6e19c434dc87df7
+- name: DE 德国7
+  server: 91.107.139.186
+  port: 51459
+  type: vmess
+  uuid: 500cdc83-b189-4d79-b06b-139c7972a57f
+  alterId: 0
+  cipher: auto
+- name: DE 德国8
+  server: 89.127.197.71
+  port: 2200
+  type: vless
+  uuid: d4aad26f-70b6-4411-8517-17f7b4281886
+  network: ws
+  ws-opts:
+    path: /v1
+    headers:
+      Host: rzd.ru
+- name: DE 德国9
+  server: 89.127.217.9
+  port: 2200
+  type: vless
+  uuid: 9501f3d6-483f-45c1-ab2c-33266520cd5c
+  network: ws
+  ws-opts:
+    path: /v1
+    headers:
+      Host: rzd.ru
 - name: DE 德国10
-  server: jdwadgw.cvewfjg.shop
-  port: 443
+  server: 150.241.65.217
+  port: 25247
   type: vless
-  uuid: 711c018e-2692-4aa8-93f3-544d83fcd16c
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: www.cloudflare.com
-  client-fingerprint: chrome
-  reality-opts:
-    public-key: HyVSZ2OyySwXT-xRhTAqoiuYflIaj_b0Jxm7S1Iq9hs
-    short-id: 7a76f3c4b9dd
+  uuid: deb9c015-1ffe-4e41-9d21-310eb0422a4c
+  network: ws
+  ws-opts:
+    path: /xray
 - name: DE 德国11
-  server: swe11.myxasecure.space
-  port: 443
-  type: vless
-  uuid: 06d44c57-8e1a-41f4-b9c4-65d35869e078
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: swe11.myxasecure.space
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: OCLtjVdRxsou3429LRfjkDYgiAPs24TSgSeFZpChCEw
-    short-id: d67ec5a8fc40ebea
-- name: DE 德国12
   server: 138.124.126.158
   port: 443
   type: vless
@@ -275,20 +269,7 @@ proxies:
   reality-opts:
     public-key: Lxs8Ruv2zHH0XW5EiQmuCaScfkGPCxWjW02YDWH8pyU
     short-id: eb0cca7312345678
-- name: DE 德国13
-  server: jdvymxi.cvewfjg.shop
-  port: 443
-  type: vless
-  uuid: 711c018e-2692-4aa8-93f3-544d83fcd16c
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: www.cloudflare.com
-  client-fingerprint: chrome
-  reality-opts:
-    public-key: HyVSZ2OyySwXT-xRhTAqoiuYflIaj_b0Jxm7S1Iq9hs
-    short-id: 7a76f3c4b9dd
-- name: DE 德国14
+- name: DE 德国12
   server: 2.26.84.95
   port: 443
   type: vless
@@ -301,111 +282,35 @@ proxies:
   reality-opts:
     public-key: WTCfu0XRIGi93MomsdOxuLOdnjXBkaaVZqaJWpxxYlk
     short-id: d8f3a9c2
-- name: DK 丹麦1
-  server: dk1.cyphervpn.pro
+- name: DE 德国13
+  server: 2.26.1.180
   port: 443
   type: vless
-  uuid: 8bba3194-4856-46d1-8319-075817d87eb1
+  uuid: 8fa1e2d9-df00-4ccb-8da4-84f0b2ca6875
   flow: xtls-rprx-vision
   tls: true
   skip-cert-verify: true
-  servername: dk1.cyphervpn.pro
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: USffNprEM08MHiuVy5bj6-kvxugxycuZcgQDFJyz2Wc
-    short-id: 8f9d033ad6d2cebf
-- name: FI 芬兰1
-  server: fl04.myxasecure.space
-  port: 443
-  type: vless
-  uuid: 06d44c57-8e1a-41f4-b9c4-65d35869e078
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: fl04.myxasecure.space
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: OCLtjVdRxsou3429LRfjkDYgiAPs24TSgSeFZpChCEw
-    short-id: d67ec5a8fc40ebea
-- name: FI 芬兰2
-  server: 163.5.153.153
-  port: 443
-  type: vless
-  uuid: 0a76a766-d141-44b8-944e-dff757d7116f
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: www.samsung.com
+  servername: gateway.icloud.com
   client-fingerprint: chrome
   reality-opts:
-    public-key: aB_2Tcf0A5LoiIEZHztR_l-ZOFeJKxYRH67s_OVQ9C0
-    short-id: a91045bc
-- name: FI 芬兰3
-  server: 140.233.160.24
-  port: 443
+    public-key: wVWvxnxOSykObO1X7-LCevqx9829ye_X53ch_jrz9Fs
+    short-id: 06fd18e80c4f0042
+- name: DE 德国14
+  server: n8.relvix.ir
+  port: 2052
   type: vless
-  uuid: da7685a7-15ef-41e4-a0d9-009bb4be7220
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: ya.ru
-  client-fingerprint: edge
-  reality-opts:
-    public-key: V6FabatADtcX7aO9KMjGCadJC4LuQ_5nRViab-z-nFQ
-    short-id: abcd
-  network: raw
-- name: FI 芬兰4
-  server: node6.mxvpn.dev
-  port: 443
-  type: vless
-  uuid: 564082ff-cf3c-48db-9e10-8ad2312847b4
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: node6.mxvpn.dev
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: TlpXTLz1Y-v8B6q9MX55U6eypjfL0LCSNE5zQP4yRHw
-    short-id: bbc68cec8bb8d2e3
-- name: FI 芬兰5
-  server: node5.mxvpn.dev
-  port: 443
-  type: vless
-  uuid: 564082ff-cf3c-48db-9e10-8ad2312847b4
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: node5.mxvpn.dev
-  client-fingerprint: chrome
-  reality-opts:
-    public-key: TlpXTLz1Y-v8B6q9MX55U6eypjfL0LCSNE5zQP4yRHw
-    short-id: bbc68cec8bb8d2e3
-- name: FI 芬兰6
-  server: fl06.myxasecure.space
-  port: 443
-  type: vless
-  uuid: 06d44c57-8e1a-41f4-b9c4-65d35869e078
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: fl06.myxasecure.space
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: OCLtjVdRxsou3429LRfjkDYgiAPs24TSgSeFZpChCEw
-    short-id: d67ec5a8fc40ebea
-- name: FI 芬兰7
-  server: pro-fi.emrata.top
-  port: 443
-  type: vless
-  uuid: d9e292f3-3c9e-4fea-9961-a0a8ae201eac
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: pro-fi.emrata.top
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: F2VfBr2UmjDTErB_oruvW5aIvzH_xGfM2AW5_w-DF0I
-    short-id: ''
+  uuid: 5cdcbd83-0742-4f45-a098-02340aa18f2b
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: n5.droonix.ir
+- name: DE 德国15
+  server: 130.61.36.133
+  port: 59924
+  type: ss
+  cipher: chacha20-ietf-poly1305
+  password: OWVhYWM4OTFlNGFhNTFiNjY5NDNlODI3ZDE5Njc0ZmE=
 - name: FR 法国1
   server: node13.mxvpn.dev
   port: 443
@@ -420,44 +325,58 @@ proxies:
     public-key: TlpXTLz1Y-v8B6q9MX55U6eypjfL0LCSNE5zQP4yRHw
     short-id: bbc68cec8bb8d2e3
 - name: FR 法国2
-  server: fr3.cyphervpn.pro
-  port: 443
+  server: 46.226.166.205
+  port: 34034
   type: vless
-  uuid: 8bba3194-4856-46d1-8319-075817d87eb1
-  flow: xtls-rprx-vision
+  uuid: a97c88d9-116e-4085-9f30-5f9b513feeeb
   tls: true
   skip-cert-verify: true
-  servername: fr3.cyphervpn.pro
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: -cfh-rBjSYKhBeAgGzYLrcDiEfZc9xRqCvMB0kpOokQ
-    short-id: 253105aeda9e37a7
-- name: FR 法国3
-  server: fr17.myxasecure.space
-  port: 443
-  type: vless
-  uuid: 06d44c57-8e1a-41f4-b9c4-65d35869e078
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: fr17.myxasecure.space
+  servername: www.apple.com
   client-fingerprint: chrome
   reality-opts:
-    public-key: OCLtjVdRxsou3429LRfjkDYgiAPs24TSgSeFZpChCEw
-    short-id: d67ec5a8fc40ebea
-- name: GB 英国1
-  server: pro-uk.emrata.top
+    public-key: vheledf-jaKtPd33wOXMj9FqOLRmcKXc4nlQUVTKeC4
+    short-id: 21cf
+- name: FR 法国3
+  server: d-pl.cloud-cdn.xyz
   port: 443
   type: vless
-  uuid: 7bfbb11d-9210-4954-b388-4af4f8083b44
+  uuid: b55a6115-07f5-4464-85b5-7059ce4701f3
+  flow: xtls-rprx-vision
   tls: true
   skip-cert-verify: true
-  servername: pro-uk.emrata.top
-  client-fingerprint: firefox
+  servername: d-pl.cloud-cdn.xyz
+  client-fingerprint: edge
   reality-opts:
-    public-key: RYnbBzo-UTB4nVMymzJ5B6TgYed7DfOc6O5Pr_htYSc
-    short-id: ''
+    public-key: nFJCJ2tvxLdLrc9G-O1laW8KDir5SDnaOTmYndVaOGQ
+    short-id: 7a3f9e2b1c8d4f6a
+- name: FR 法国4
+  server: 45.192.2.157
+  port: 443
+  type: vless
+  uuid: 5098e189-3462-4ff7-8ddd-4aaecfd060ea
+  flow: xtls-rprx-vision
+  tls: true
+  skip-cert-verify: true
+  servername: yandex.net
+  client-fingerprint: qq
+  reality-opts:
+    public-key: 1oUeBtHH4DskTM_jCh-6enWRkFMDX9l1OU5kWYl4kxA
+    short-id: f34818a561dfd1fe
+  alpn:
+  - http/1.1
+- name: GB 英国1
+  server: 129.151.78.150
+  port: 61312
+  type: ss
+  cipher: chacha20-ietf-poly1305
+  password: MGU4ZjVkMGNhY2Y3YzM0NmIxMDgyNDQ5OGVjZjY2Y2Y=
 - name: GB 英国2
+  server: 144.24.227.140
+  port: 61312
+  type: ss
+  cipher: chacha20-ietf-poly1305
+  password: MGU4ZjVkMGNhY2Y3YzM0NmIxMDgyNDQ5OGVjZjY2Y2Y=
+- name: GB 英国3
   server: 31.76.39.24
   port: 443
   type: vless
@@ -470,32 +389,6 @@ proxies:
   reality-opts:
     public-key: 2cfC4N-V5UGaoDjrRXWb6TYJNfuXzhlITdKoCx9mLwM
     short-id: 408763178ac4cb55
-- name: HU 匈牙利1
-  server: hu007.bearbeer.digital
-  port: 443
-  type: vless
-  uuid: 52d0b2d5-a003-4509-ab70-d1d720a14cd7
-  tls: true
-  skip-cert-verify: true
-  servername: hu007.bearbeer.digital
-  client-fingerprint: qq
-  reality-opts:
-    public-key: z-TKWOWgZLfzQ-wNdwXQqVwaUgCmbchM2Xtrk1NGynU
-    short-id: ''
-  network: xhttp
-- name: IE 爱尔兰1
-  server: ie.orpheous.ru
-  port: 443
-  type: vless
-  uuid: ac5313ae-803b-4104-a047-94c97ecb621e
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: ie.orpheous.ru
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: lHCkAu_DOVFtE-iL2JGrPt44QeTCFijXuRfuGaSni3Q
-    short-id: 9e4eced6e98ed4d4
 - name: IN 印度1
   server: 94.183.255.19
   port: 443
@@ -509,46 +402,61 @@ proxies:
   reality-opts:
     public-key: m6RDw1b8R4lCaRUIzhHpy6TtX2Dhk6nyby8dWzeQqA0
     short-id: dd3ff38418d29d22
+- name: KR 韩国1
+  server: 38.110.1.246
+  port: 18000
+  type: vmess
+  uuid: f8c8dc3d-0d37-46b0-8b34-a7232882fcfe
+  alterId: 0
+  cipher: auto
+- name: KZ 哈萨克斯坦1
+  server: 5.254.121.201
+  port: 443
+  type: vless
+  uuid: 7d6d3391-7bf8-46bf-bd2e-01e82a790017
+  flow: xtls-rprx-vision
+  tls: true
+  skip-cert-verify: true
+  servername: cdn4-35.yahoo.com
+  client-fingerprint: chrome
+  reality-opts:
+    public-key: CMkW1axrhEXoiJ6anMz9XEjlfqlAtEZya7L0b5ZPMyw
+    short-id: cd5d72100116f1c3
 - name: LT 立陶宛1
-  server: veesp-fj-vpn-1.concept7.ru
+  server: 2.59.162.56
   port: 443
   type: vless
-  uuid: 15e0833c-08ad-47f3-bf80-60c2a47a6774
+  uuid: 8bba3194-4856-46d1-8319-075817d87eb1
   flow: xtls-rprx-vision
   tls: true
   skip-cert-verify: true
-  servername: deepl.com
+  servername: lt2.cyphervpn.pro
   client-fingerprint: chrome
   reality-opts:
-    public-key: KEZ93Y9VgoirI18wIpcfS3z8I9GiaiFe-GKqGdEPMmg
-    short-id: eb1e33e8a81b
-- name: LT 立陶宛2
-  server: veesp-fj-vpn-2.concept7.ru
-  port: 443
-  type: vless
-  uuid: 15e0833c-08ad-47f3-bf80-60c2a47a6774
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: deepl.com
-  client-fingerprint: chrome
-  reality-opts:
-    public-key: KEZ93Y9VgoirI18wIpcfS3z8I9GiaiFe-GKqGdEPMmg
-    short-id: e29c9c180c62
+    public-key: USffNprEM08MHiuVy5bj6-kvxugxycuZcgQDFJyz2Wc
+    short-id: 8f9d033ad6d2cebf
+  alpn:
+  - http/1.1
+- name: MX 墨西哥1
+  server: 84.17.41.2
+  port: 18000
+  type: vmess
+  uuid: f8c8dc3d-0d37-46b0-8b34-a7232882fcfe
+  alterId: 0
+  cipher: auto
 - name: NL 荷兰1
-  server: 5.255.110.147
-  port: 443
+  server: 77.233.214.31
+  port: 40443
   type: vless
-  uuid: e2e1ddaa-1acf-4c4c-a211-92284f6440ed
+  uuid: 52720aa1-a75b-4f72-9af4-d7237c197f3e
   flow: xtls-rprx-vision
   tls: true
   skip-cert-verify: true
-  servername: nll.scroogethebest.com
+  servername: deepl.com
   client-fingerprint: chrome
   reality-opts:
-    public-key: AYQOZFxjvHN-RIzKYEibwFiFsp03cdlWGdCmyFfuNVc
-    short-id: 4fa44664f6a566d3
-  network: raw
+    public-key: Sw4tAz5d-rLhaSFsEDDxlgwJbK4NMQUFDHF_oyRwUWE
+    short-id: cd5c
 - name: NL 荷兰2
   server: nl15.sodahub.online
   port: 443
@@ -576,21 +484,6 @@ proxies:
     public-key: AYL1z7PNyo6LqYLeZpXa50FnK9eEu7o18KHRhOlST1w
     short-id: bd72
 - name: NL 荷兰4
-  server: 2.26.82.237
-  port: 443
-  type: vless
-  uuid: 906be882-7f16-47c3-8702-59db2ada9688
-  tls: true
-  skip-cert-verify: true
-  servername: speed.cloudflare.com
-  client-fingerprint: chrome
-  reality-opts:
-    public-key: VmBEjLUpiEnoNIaPNGDfVPIOzH_ktSDdsGGAvissxgI
-    short-id: ''
-  network: grpc
-  grpc-opts:
-    grpc-service-name: grpc
-- name: NL 荷兰5
   server: 144.124.248.186
   port: 443
   type: vless
@@ -603,7 +496,7 @@ proxies:
   reality-opts:
     public-key: L0acYoTxKR5ix7LXAmP10cy06n2JjgkXTojGjtWAqww
     short-id: ed7b9bdfedb9b8e5
-- name: NL 荷兰6
+- name: NL 荷兰5
   server: 144.124.249.252
   port: 443
   type: vless
@@ -616,7 +509,7 @@ proxies:
   reality-opts:
     public-key: L0acYoTxKR5ix7LXAmP10cy06n2JjgkXTojGjtWAqww
     short-id: ed7b9bdfedb9b8e5
-- name: NL 荷兰7
+- name: NL 荷兰6
   server: 144.124.246.55
   port: 443
   type: vless
@@ -629,85 +522,26 @@ proxies:
   reality-opts:
     public-key: L0acYoTxKR5ix7LXAmP10cy06n2JjgkXTojGjtWAqww
     short-id: ed7b9bdfedb9b8e5
+- name: NL 荷兰7
+  server: nl16.sodahub.online
+  port: 443
+  type: vless
+  uuid: 8bba3194-4856-46d1-8319-075817d87eb1
+  flow: xtls-rprx-vision
+  tls: true
+  skip-cert-verify: true
+  servername: nl16.sodahub.online
+  client-fingerprint: chrome
+  reality-opts:
+    public-key: oGgupP3uX0TNyFwuxNYaFj-IQ8EPhCuKfJdaOHiMnV0
+    short-id: c334408a1056aaf8
 - name: NL 荷兰8
-  server: nl.mifbot.pro
-  port: 443
-  type: vless
-  uuid: 11113f77-b439-4911-a8dd-414d2ee36b59
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: api-maps.yandex.ru
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: PF6pOzJoXXwKR6igWNuCr6GmgQ9YetgmpVOTfY2tpDQ
-    short-id: 6c1a9e3d7b4f2c08
-- name: NL 荷兰9
-  server: 217.60.23.230
-  port: 443
-  type: vless
-  uuid: 7856eb14-06d6-423a-b4a6-353b3ce5c51a
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: site.rumedia-cdn.com
-  client-fingerprint: chrome
-  reality-opts:
-    public-key: IY7z4YneuuMK6nsOyqxHPC30hLR4CaxBVHD-SpRk2H0
-    short-id: 377209f7cecf2f7d
-- name: NO 挪威1
-  server: 5.254.121.177
-  port: 443
-  type: vless
-  uuid: 5c2a674b-bf9d-4461-b56d-a9c2bc299d9a
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: cdn9-40.yahoo.com
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: CMkW1axrhEXoiJ6anMz9XEjlfqlAtEZya7L0b5ZPMyw
-    short-id: dc124373ff9327cf
+  server: 213.109.147.242
+  port: 62685
+  type: ss
+  cipher: chacha20-ietf-poly1305
+  password: VpKABcOpNNA0l5G2AVOmw8
 - name: PL 波兰1
-  server: 151.245.192.225
-  port: 443
-  type: vless
-  uuid: da7685a7-15ef-41e4-a0d9-009bb4be7220
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: auto.malina24.xyz
-  client-fingerprint: qq
-  reality-opts:
-    public-key: V6FabatADtcX7aO9KMjGCadJC4LuQ_5nRViab-z-nFQ
-    short-id: '5678'
-- name: PL 波兰2
-  server: 45.198.96.153
-  port: 443
-  type: vless
-  uuid: 83ab4443-ec22-4b3d-a587-53090be7beb2
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: storage.yandex.net
-  client-fingerprint: chrome
-  reality-opts:
-    public-key: 9Y-_jCI3Z1x6SXK2tHdZ6V1CN9IJPNPnoxSW0cbXxD8
-    short-id: 764f497dda21c4fc
-- name: PL 波兰3
-  server: pl08.myxasecure.space
-  port: 443
-  type: vless
-  uuid: 06d44c57-8e1a-41f4-b9c4-65d35869e078
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: pl08.myxasecure.space
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: OCLtjVdRxsou3429LRfjkDYgiAPs24TSgSeFZpChCEw
-    short-id: d67ec5a8fc40ebea
-- name: PL 波兰4
   server: 31.56.188.145
   port: 443
   type: vless
@@ -721,33 +555,47 @@ proxies:
     public-key: b-Cm9hX-3UHsS1L_lnUB6AMjuKhlN1IDdBbZ506itjI
     short-id: 00bca5982f82d083
 - name: RU 俄罗斯1
-  server: ru-01.gni-daed.ru
-  port: 443
+  server: 185.247.16.3
+  port: 2200
   type: vless
-  uuid: 7c0f30a2-a7c1-43b1-bc51-20f07036a76e
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: ru-01.gni-daed.ru
-  client-fingerprint: chrome
-  reality-opts:
-    public-key: Np5eNpCJdcXe4IvMs0stzE-sMtlphhTnZeuCkhjQXzQ
-    short-id: a8389289e18af5f4
+  uuid: 155e8dd4-a559-407a-9ea8-13a5e829f066
+  network: ws
+  ws-opts:
+    path: /v1
+    headers:
+      Host: rzd.ru
+- name: RU 俄罗斯2
+  server: 89.127.217.98
+  port: 4100
+  type: vless
+  uuid: 155e8dd4-a559-407a-9ea8-13a5e829f066
+  network: ws
+  ws-opts:
+    path: /v1
+    headers:
+      Host: live.ok.ru
+- name: RU 俄罗斯3
+  server: 89.127.197.71
+  port: 4100
+  type: vless
+  uuid: 155e8dd4-a559-407a-9ea8-13a5e829f066
+  network: ws
+  ws-opts:
+    path: /v1
+    headers:
+      Host: live.ok.ru
+- name: RU 俄罗斯4
+  server: 81.85.78.193
+  port: 4100
+  type: vless
+  uuid: 2aa7f4b1-e859-46d0-b8ac-8587811ab7b1
+  network: ws
+  ws-opts:
+    path: /v1
+    headers:
+      Host: live.ok.ru
 - name: SE 瑞典1
-  server: 87.120.196.68
-  port: 443
-  type: vless
-  uuid: 5bb7df8d-ad02-41fa-a8e6-8a8a4650d2c4
-  flow: xtls-rprx-vision
-  tls: true
-  skip-cert-verify: true
-  servername: yahoo.com
-  client-fingerprint: firefox
-  reality-opts:
-    public-key: XZa7f7bABj7lY4HuLopVCBBBYTu-RB7QyIZ96njvYwo
-    short-id: 7bcfc0bc
-- name: SE 瑞典2
-  server: 82.29.43.29
+  server: 82.29.43.27
   port: 443
   type: vless
   uuid: da7685a7-15ef-41e4-a0d9-009bb4be7220
@@ -755,7 +603,7 @@ proxies:
   tls: true
   skip-cert-verify: true
   servername: auto.malina24.xyz
-  client-fingerprint: chrome
+  client-fingerprint: firefox
   reality-opts:
     public-key: V6FabatADtcX7aO9KMjGCadJC4LuQ_5nRViab-z-nFQ
     short-id: '5678'
@@ -772,8 +620,8 @@ proxies:
   reality-opts:
     public-key: CMkW1axrhEXoiJ6anMz9XEjlfqlAtEZya7L0b5ZPMyw
     short-id: 99e78ee91698aaaa
-- name: UNKNOWN1
-  server: 45.196.201.41
+- name: TR 土耳其2
+  server: 45.196.201.7
   port: 443
   type: vless
   uuid: f75814f6-8f81-4847-b792-168c41f2dc85
@@ -785,20 +633,37 @@ proxies:
   reality-opts:
     public-key: zii4nGNapnFKL6SN8GzWNqFlElBvUCUFUThEP0kFH04
     short-id: c6ef72e4635d15a5
+- name: UNKNOWN1
+  server: 199.232.170.160
+  port: 80
+  type: vless
+  uuid: cfde0aba-0985-4034-ab92-50b1534b126c
+  network: ws
+  ws-opts:
+    path: /?Telegram-WangCai2🇨🇳
+    headers:
+      Host: BankMelat.glObal.ssl.faStly.nEt
 proxy-groups:
 - name: PROXY
   type: select
   proxies:
   - AUTO
-  - HK 香港1
-  - SG 新加坡1
+  - JP 日本1
   - US 美国1
   - US 美国2
   - US 美国3
   - US 美国4
+  - US 美国5
+  - US 美国6
+  - US 美国7
   - BG 保加利亚1
   - CA 加拿大1
   - CA 加拿大2
+  - CA 加拿大3
+  - CA 加拿大4
+  - CH 瑞士1
+  - CH 瑞士2
+  - CO 哥伦比亚1
   - DE 德国1
   - DE 德国2
   - DE 德国3
@@ -813,24 +678,19 @@ proxy-groups:
   - DE 德国12
   - DE 德国13
   - DE 德国14
-  - DK 丹麦1
-  - FI 芬兰1
-  - FI 芬兰2
-  - FI 芬兰3
-  - FI 芬兰4
-  - FI 芬兰5
-  - FI 芬兰6
-  - FI 芬兰7
+  - DE 德国15
   - FR 法国1
   - FR 法国2
   - FR 法国3
+  - FR 法国4
   - GB 英国1
   - GB 英国2
-  - HU 匈牙利1
-  - IE 爱尔兰1
+  - GB 英国3
   - IN 印度1
+  - KR 韩国1
+  - KZ 哈萨克斯坦1
   - LT 立陶宛1
-  - LT 立陶宛2
+  - MX 墨西哥1
   - NL 荷兰1
   - NL 荷兰2
   - NL 荷兰3
@@ -839,29 +699,34 @@ proxy-groups:
   - NL 荷兰6
   - NL 荷兰7
   - NL 荷兰8
-  - NL 荷兰9
-  - NO 挪威1
   - PL 波兰1
-  - PL 波兰2
-  - PL 波兰3
-  - PL 波兰4
   - RU 俄罗斯1
+  - RU 俄罗斯2
+  - RU 俄罗斯3
+  - RU 俄罗斯4
   - SE 瑞典1
-  - SE 瑞典2
   - TR 土耳其1
+  - TR 土耳其2
   - UNKNOWN1
 - name: AUTO
   type: url-test
   proxies:
-  - HK 香港1
-  - SG 新加坡1
+  - JP 日本1
   - US 美国1
   - US 美国2
   - US 美国3
   - US 美国4
+  - US 美国5
+  - US 美国6
+  - US 美国7
   - BG 保加利亚1
   - CA 加拿大1
   - CA 加拿大2
+  - CA 加拿大3
+  - CA 加拿大4
+  - CH 瑞士1
+  - CH 瑞士2
+  - CO 哥伦比亚1
   - DE 德国1
   - DE 德国2
   - DE 德国3
@@ -876,24 +741,19 @@ proxy-groups:
   - DE 德国12
   - DE 德国13
   - DE 德国14
-  - DK 丹麦1
-  - FI 芬兰1
-  - FI 芬兰2
-  - FI 芬兰3
-  - FI 芬兰4
-  - FI 芬兰5
-  - FI 芬兰6
-  - FI 芬兰7
+  - DE 德国15
   - FR 法国1
   - FR 法国2
   - FR 法国3
+  - FR 法国4
   - GB 英国1
   - GB 英国2
-  - HU 匈牙利1
-  - IE 爱尔兰1
+  - GB 英国3
   - IN 印度1
+  - KR 韩国1
+  - KZ 哈萨克斯坦1
   - LT 立陶宛1
-  - LT 立陶宛2
+  - MX 墨西哥1
   - NL 荷兰1
   - NL 荷兰2
   - NL 荷兰3
@@ -902,16 +762,14 @@ proxy-groups:
   - NL 荷兰6
   - NL 荷兰7
   - NL 荷兰8
-  - NL 荷兰9
-  - NO 挪威1
   - PL 波兰1
-  - PL 波兰2
-  - PL 波兰3
-  - PL 波兰4
   - RU 俄罗斯1
+  - RU 俄罗斯2
+  - RU 俄罗斯3
+  - RU 俄罗斯4
   - SE 瑞典1
-  - SE 瑞典2
   - TR 土耳其1
+  - TR 土耳其2
   - UNKNOWN1
   url: https://www.google.com/generate_204
   interval: 300
