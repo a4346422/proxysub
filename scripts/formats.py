@@ -3,7 +3,7 @@
 取代原 build_sub.py：去掉 IP 纯净度（trust）相关字段与主备清单分级。
 Clash / sing-box 的字段映射与 clash_parse.py:convert() 互为逆向。
 
-对外订阅会先经 quality.select_stable()（延迟门禁 / 出口去重 / 集群去重 / 结构排序 / 条数上限），
+对外订阅会先经 quality.select_stable()（延迟门禁 / 出口去重 / 集群去重 / 分桶配额 / 条数上限），
 veterans / 原始测活结果不受影响。
 """
 import base64
@@ -277,6 +277,13 @@ def main():
         qstat = dict(qstat)
         qstat["drop_reality_no_pbk"] = len(dropped_reality)
         qstat["alive_output"] = len(nodes)
+    bp = qstat.get("bucket_picked") or {}
+    bq = qstat.get("bucket_quotas") or {}
+    bucket_txt = ", ".join(
+        f"{k} {bp.get(k, 0)}/{bq.get(k, 0)}"
+        for k in ("reality443", "vless_ws", "ss", "vmess", "reality_other", "other")
+        if bp.get(k, 0) or bq.get(k, 0)
+    )
     print(
         f"质量门禁: raw {qstat['alive_raw']} → "
         f"延迟≤{qstat['latency_max_ms']}ms {qstat['after_latency']} → "
@@ -286,7 +293,8 @@ def main():
         f"（上限 {qstat['max_output_nodes']}，"
         f"丢无延迟 {qstat['drop_no_latency']} / "
         f"超时延 {qstat['drop_slow']} / 同出口 {qstat['drop_dup_exit']} / "
-        f"同集群 {qstat.get('drop_dup_cluster', 0)}）"
+        f"同集群 {qstat.get('drop_dup_cluster', 0)}；"
+        f"分桶 {bucket_txt or '-'}；补齐 {qstat.get('bucket_fill', 0)}）"
     )
 
     nodes.sort(key=output_sort_key)
@@ -349,6 +357,10 @@ def main():
             "drop_dup_exit": qstat["drop_dup_exit"],
             "drop_dup_cluster": qstat.get("drop_dup_cluster", 0),
             "drop_reality_no_pbk": qstat.get("drop_reality_no_pbk", 0),
+            "bucket_quotas": qstat.get("bucket_quotas") or {},
+            "bucket_candidates": qstat.get("bucket_candidates") or {},
+            "bucket_picked": qstat.get("bucket_picked") or {},
+            "bucket_fill": qstat.get("bucket_fill", 0),
         },
         "test_url": os.environ.get("TEST_URL",
                                    "https://www.google.com/generate_204"),

@@ -40,6 +40,14 @@ def main():
                   f"集群去重 {q.get('after_dedup_cluster', q.get('after_dedup'))} "
                   f"（丢同出口 {q.get('drop_dup_exit', 0)} / "
                   f"同集群 {q.get('drop_dup_cluster', 0)}） |")
+        bp = q.get('bucket_picked') or {}
+        if bp:
+            bq = q.get('bucket_quotas') or {}
+            parts = []
+            for k in ("reality443", "vless_ws", "ss", "vmess", "reality_other", "other"):
+                if bp.get(k) or bq.get(k):
+                    parts.append(f"{k} {bp.get(k, 0)}/{bq.get(k, 0)}")
+            print(f"| 分桶入选 | {', '.join(parts)}；补齐 {q.get('bucket_fill', 0)} |")
     if s.get("veterans"):
         print(f"| 老兵名单 | {s['veterans']}（跨轮沉淀，下轮 A 段直接复测） |")
     print(f"| 协议分布 | {s.get('by_proto')} |")
@@ -47,7 +55,7 @@ def main():
     print(f"| 更新时间 | {s.get('updated_at')} |")
     print(f"| 已提交 | {os.environ.get('COMMITTED', 'n/a')} |")
     print(f"\n存活判定：经节点实际请求 `{s.get('test_url')}` 返回 204；"
-          f"写入订阅前再经质量门禁（延迟/出口去重/集群去重/结构排序/条数上限）。")
+          f"写入订阅前再经质量门禁（延迟/出口去重/集群去重/分桶配额/条数上限）。")
 
     if not s.get("alive"):
         print("\n> 本次订阅输出为 0，已跳过提交以保留上一次的可用订阅。")
