@@ -31,9 +31,10 @@ def main():
     print(f"| 已提交 | {os.environ.get('COMMITTED', 'n/a')} |")
     urls = s.get("test_urls") or ([s["test_url"]] if s.get("test_url") else [])
     if len(urls) > 1:
-        print("\n存活判定：经节点实际请求以下**任一** URL 返回 204：")
-        for u in urls:
-            print(f"- `{u}`")
+        print("\n存活判定：经节点按序请求以下 URL，**全部**返回 204 才算存活"
+              "（latency = 各源 max）：")
+        for i, u in enumerate(urls, 1):
+            print(f"{i}. `{u}`")
     else:
         print(f"\n存活判定：经节点实际请求 `{urls[0] if urls else '?'}` 返回 204。")
 

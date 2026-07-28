@@ -318,7 +318,7 @@ def main():
             encoding="utf-8")).get("nodes", []))
         if (OUT / "veterans.json").exists() else 0,
         "drop_reality_no_pbk": len(dropped_reality),
-        "note": "alive = 经节点实际请求 test_urls 任一返回 204 且可完整导出的节点数",
+        "note": "alive = 经节点按 test_urls 顺序全部返回 204（AND）且可完整导出的节点数；latency_ms=各源 max",
     }
     raw_urls = (os.environ.get("TEST_URLS") or "").strip()
     if raw_urls:
@@ -326,12 +326,13 @@ def main():
     else:
         single = (os.environ.get("TEST_URL") or "").strip()
         test_urls = [single] if single else [
-            "https://www.google.com/generate_204",
             "https://www.gstatic.com/generate_204",
             "https://cp.cloudflare.com/generate_204",
+            "https://www.google.com/generate_204",
         ]
     status["test_urls"] = test_urls
-    status["test_url"] = test_urls[0] if test_urls else ""
+    # 展示用：多源时取最后一关（默认 Google），单源即其本身
+    status["test_url"] = test_urls[-1] if test_urls else ""
     (OUT / "status.json").write_text(
         json.dumps(status, ensure_ascii=False, indent=2), encoding="utf-8")
 
