@@ -1,90 +1,90 @@
 {
-  "total_nodes": 31454,
-  "total_alive": 416,
+  "total_nodes": 31404,
+  "total_alive": 412,
   "sources": [
     {
       "source": "free-nodes/v2rayfree:v202607271",
       "nodes": 3,
       "alive": 3,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1101
+      "avg_latency_ms": 1753
     },
     {
       "source": "free-nodes/v2rayfree:v202607281",
       "nodes": 1,
       "alive": 1,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1448
-    },
-    {
-      "source": "free-nodes/v2rayfree:v202607291",
-      "nodes": 1,
-      "alive": 1,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 676
+      "avg_latency_ms": 1024
     },
     {
       "source": "free-nodes/v2rayfree:v202607301",
       "nodes": 1,
       "alive": 1,
       "alive_rate": 100.0,
-      "avg_latency_ms": 2492
+      "avg_latency_ms": 797
+    },
+    {
+      "source": "free-nodes/v2rayfree:v202607291",
+      "nodes": 1,
+      "alive": 1,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 757
     },
     {
       "source": "Pawdroid/Free-servers:sub_en",
-      "nodes": 12,
-      "alive": 7,
-      "alive_rate": 58.333,
-      "avg_latency_ms": 2598
-    },
-    {
-      "source": "Pawdroid/Free-servers:sub",
-      "nodes": 11,
-      "alive": 1,
-      "alive_rate": 9.091,
-      "avg_latency_ms": 1654
-    },
-    {
-      "source": "ts-sf/fly:v2",
-      "nodes": 104,
-      "alive": 7,
-      "alive_rate": 6.731,
-      "avg_latency_ms": 2642
-    },
-    {
-      "source": "free-nodes/v2rayfree:v202608041",
-      "nodes": 584,
-      "alive": 34,
-      "alive_rate": 5.822,
-      "avg_latency_ms": 2393
-    },
-    {
-      "source": "anaer/Sub:clash.yaml",
-      "nodes": 309,
-      "alive": 15,
-      "alive_rate": 4.854,
-      "avg_latency_ms": 1205
+      "nodes": 15,
+      "alive": 6,
+      "alive_rate": 40.0,
+      "avg_latency_ms": 847
     },
     {
       "source": "ermaozi/get_subscribe:v2ray.txt",
-      "nodes": 21,
+      "nodes": 7,
       "alive": 1,
-      "alive_rate": 4.762,
+      "alive_rate": 14.286,
       "avg_latency_ms": null
     },
     {
+      "source": "Pawdroid/Free-servers:sub",
+      "nodes": 10,
+      "alive": 1,
+      "alive_rate": 10.0,
+      "avg_latency_ms": 808
+    },
+    {
+      "source": "free-nodes/v2rayfree:v202608041",
+      "nodes": 581,
+      "alive": 40,
+      "alive_rate": 6.885,
+      "avg_latency_ms": 3758
+    },
+    {
+      "source": "anaer/Sub:clash.yaml",
+      "nodes": 294,
+      "alive": 15,
+      "alive_rate": 5.102,
+      "avg_latency_ms": 1345
+    },
+    {
+      "source": "ts-sf/fly:v2",
+      "nodes": 109,
+      "alive": 5,
+      "alive_rate": 4.587,
+      "avg_latency_ms": 1796
+    },
+    {
       "source": "mahdibland/V2RayAggregator:sub_merge_base64.txt",
-      "nodes": 4754,
-      "alive": 67,
-      "alive_rate": 1.409,
-      "avg_latency_ms": 1853
+      "nodes": 4761,
+      "alive": 71,
+      "alive_rate": 1.491,
+      "avg_latency_ms": 1838
     },
     {
       "source": "Leon406/SubCrawler:vless",
-      "nodes": 25494,
-      "alive": 278,
-      "alive_rate": 1.09,
-      "avg_latency_ms": 2287
+      "nodes": 25457,
+      "alive": 267,
+      "alive_rate": 1.049,
+      "avg_latency_ms": 2238
     },
     {
       "source": "w1770946466/Auto_proxy:Long_term_subscription",
@@ -92,6 +92,13 @@
       "alive": 0,
       "alive_rate": 0.0,
       "avg_latency_ms": null
+    },
+    {
+      "source": "mfuu/v2ray:v2ray",
+      "nodes": 27,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": 622
     },
     {
       "source": "ermaozi01/free_clash_vpn:v2ray.txt",
@@ -102,17 +109,10 @@
     },
     {
       "source": "peasoft/NoMoreWalls:list_raw.txt",
-      "nodes": 24,
+      "nodes": 23,
       "alive": 0,
       "alive_rate": 0.0,
       "avg_latency_ms": null
-    },
-    {
-      "source": "mfuu/v2ray:v2ray",
-      "nodes": 21,
-      "alive": 0,
-      "alive_rate": 0.0,
-      "avg_latency_ms": 620
     },
     {
       "source": "vxiaov/free_proxies:clash.provider.yaml",
