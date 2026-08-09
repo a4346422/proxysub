@@ -1,118 +1,111 @@
 {
-  "total_nodes": 32376,
-  "total_alive": 442,
+  "total_nodes": 32360,
+  "total_alive": 435,
   "sources": [
     {
-      "source": "free-nodes/v2rayfree:v202608071",
+      "source": "free-nodes/v2rayfree:v202608061",
       "nodes": 5,
       "alive": 5,
       "alive_rate": 100.0,
-      "avg_latency_ms": 2058
+      "avg_latency_ms": 2220
     },
     {
-      "source": "free-nodes/v2rayfree:v202608081",
+      "source": "free-nodes/v2rayfree:v202608071",
       "nodes": 4,
       "alive": 4,
       "alive_rate": 100.0,
-      "avg_latency_ms": 3013
+      "avg_latency_ms": 2540
     },
     {
-      "source": "free-nodes/v2rayfree:v202608061",
-      "nodes": 3,
-      "alive": 3,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 1358
-    },
-    {
-      "source": "free-nodes/v2rayfree:v202607271",
+      "source": "free-nodes/v2rayfree:v202608081",
       "nodes": 2,
       "alive": 2,
       "alive_rate": 100.0,
-      "avg_latency_ms": 692
+      "avg_latency_ms": 2506
     },
     {
       "source": "free-nodes/v2rayfree:v202608051",
       "nodes": 2,
       "alive": 2,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1231
+      "avg_latency_ms": 2310
     },
     {
-      "source": "free-nodes/v2rayfree:v202607281",
+      "source": "free-nodes/v2rayfree:v202607271",
       "nodes": 1,
       "alive": 1,
       "alive_rate": 100.0,
-      "avg_latency_ms": 677
+      "avg_latency_ms": 1437
     },
     {
       "source": "Pawdroid/Free-servers:sub_en",
-      "nodes": 14,
-      "alive": 9,
-      "alive_rate": 64.286,
-      "avg_latency_ms": 729
+      "nodes": 11,
+      "alive": 7,
+      "alive_rate": 63.636,
+      "avg_latency_ms": 1474
+    },
+    {
+      "source": "Pawdroid/Free-servers:sub",
+      "nodes": 18,
+      "alive": 2,
+      "alive_rate": 11.111,
+      "avg_latency_ms": 1245
+    },
+    {
+      "source": "peasoft/NoMoreWalls:list_raw.txt",
+      "nodes": 28,
+      "alive": 3,
+      "alive_rate": 10.714,
+      "avg_latency_ms": null
     },
     {
       "source": "ermaozi/get_subscribe:v2ray.txt",
-      "nodes": 9,
+      "nodes": 10,
       "alive": 1,
-      "alive_rate": 11.111,
+      "alive_rate": 10.0,
       "avg_latency_ms": null
     },
     {
       "source": "free-nodes/v2rayfree:v202608091",
-      "nodes": 625,
-      "alive": 43,
-      "alive_rate": 6.88,
-      "avg_latency_ms": 1691
-    },
-    {
-      "source": "Pawdroid/Free-servers:sub",
-      "nodes": 15,
-      "alive": 1,
-      "alive_rate": 6.667,
-      "avg_latency_ms": 728
+      "nodes": 628,
+      "alive": 45,
+      "alive_rate": 7.166,
+      "avg_latency_ms": 2582
     },
     {
       "source": "mfuu/v2ray:v2ray",
       "nodes": 18,
       "alive": 1,
       "alive_rate": 5.556,
-      "avg_latency_ms": 595
+      "avg_latency_ms": 774
     },
     {
       "source": "anaer/Sub:clash.yaml",
-      "nodes": 387,
-      "alive": 16,
-      "alive_rate": 4.134,
-      "avg_latency_ms": 594
+      "nodes": 411,
+      "alive": 17,
+      "alive_rate": 4.136,
+      "avg_latency_ms": 1289
     },
     {
       "source": "ts-sf/fly:v2",
-      "nodes": 121,
+      "nodes": 122,
       "alive": 5,
-      "alive_rate": 4.132,
-      "avg_latency_ms": 1099
+      "alive_rate": 4.098,
+      "avg_latency_ms": 1004
     },
     {
       "source": "mahdibland/V2RayAggregator:sub_merge_base64.txt",
-      "nodes": 4761,
+      "nodes": 4760,
       "alive": 66,
-      "alive_rate": 1.386,
-      "avg_latency_ms": 1126
+      "alive_rate": 1.387,
+      "avg_latency_ms": 1421
     },
     {
       "source": "Leon406/SubCrawler:vless",
-      "nodes": 26160,
-      "alive": 282,
-      "alive_rate": 1.078,
-      "avg_latency_ms": 2445
-    },
-    {
-      "source": "peasoft/NoMoreWalls:list_raw.txt",
-      "nodes": 136,
-      "alive": 1,
-      "alive_rate": 0.735,
-      "avg_latency_ms": 733
+      "nodes": 26227,
+      "alive": 274,
+      "alive_rate": 1.045,
+      "avg_latency_ms": 2614
     },
     {
       "source": "w1770946466/Auto_proxy:Long_term_subscription",
