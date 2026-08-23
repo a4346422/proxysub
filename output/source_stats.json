@@ -1,76 +1,76 @@
 {
-  "total_nodes": 8674,
-  "total_alive": 498,
+  "total_nodes": 8680,
+  "total_alive": 465,
   "sources": [
     {
       "source": "free-nodes/v2rayfree:v202607271",
       "nodes": 14,
       "alive": 14,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1016
-    },
-    {
-      "source": "free-nodes/v2rayfree:v202607281",
-      "nodes": 2,
-      "alive": 2,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 894
-    },
-    {
-      "source": "free-nodes/v2rayfree:v202608041",
-      "nodes": 2,
-      "alive": 2,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 874
-    },
-    {
-      "source": "free-nodes/v2rayfree:v202607301",
-      "nodes": 2,
-      "alive": 2,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 938
+      "avg_latency_ms": 1450
     },
     {
       "source": "free-nodes/v2rayfree:v202608081",
       "nodes": 2,
       "alive": 2,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1148
+      "avg_latency_ms": 1430
+    },
+    {
+      "source": "free-nodes/v2rayfree:v202607301",
+      "nodes": 2,
+      "alive": 2,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 1028
+    },
+    {
+      "source": "free-nodes/v2rayfree:v202608041",
+      "nodes": 2,
+      "alive": 2,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 1672
+    },
+    {
+      "source": "free-nodes/v2rayfree:v202607281",
+      "nodes": 1,
+      "alive": 1,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 1052
     },
     {
       "source": "free-nodes/v2rayfree:v202608071",
       "nodes": 1,
       "alive": 1,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1066
+      "avg_latency_ms": 1057
     },
     {
       "source": "Pawdroid/Free-servers:sub_en",
       "nodes": 43,
-      "alive": 39,
-      "alive_rate": 90.698,
-      "avg_latency_ms": 1275
+      "alive": 40,
+      "alive_rate": 93.023,
+      "avg_latency_ms": 1394
     },
     {
       "source": "Pawdroid/Free-servers:sub",
-      "nodes": 21,
-      "alive": 7,
-      "alive_rate": 33.333,
-      "avg_latency_ms": 1513
+      "nodes": 22,
+      "alive": 8,
+      "alive_rate": 36.364,
+      "avg_latency_ms": 1882
     },
     {
       "source": "ts-sf/fly:v2",
-      "nodes": 143,
-      "alive": 19,
-      "alive_rate": 13.287,
-      "avg_latency_ms": 2177
+      "nodes": 142,
+      "alive": 18,
+      "alive_rate": 12.676,
+      "avg_latency_ms": 1863
     },
     {
-      "source": "Leon406/SubCrawler:vless",
-      "nodes": 4191,
-      "alive": 319,
-      "alive_rate": 7.612,
-      "avg_latency_ms": 1729
+      "source": "peasoft/NoMoreWalls:list_raw.txt",
+      "nodes": 52,
+      "alive": 6,
+      "alive_rate": 11.538,
+      "avg_latency_ms": 1281
     },
     {
       "source": "ermaozi/get_subscribe:v2ray.txt",
@@ -80,32 +80,32 @@
       "avg_latency_ms": null
     },
     {
-      "source": "anaer/Sub:clash.yaml",
-      "nodes": 325,
-      "alive": 10,
-      "alive_rate": 3.077,
-      "avg_latency_ms": 1578
-    },
-    {
-      "source": "mahdibland/V2RayAggregator:sub_merge_base64.txt",
-      "nodes": 3617,
-      "alive": 79,
-      "alive_rate": 2.184,
-      "avg_latency_ms": 1439
+      "source": "Leon406/SubCrawler:vless",
+      "nodes": 4202,
+      "alive": 280,
+      "alive_rate": 6.663,
+      "avg_latency_ms": 1751
     },
     {
       "source": "mfuu/v2ray:v2ray",
-      "nodes": 89,
-      "alive": 1,
-      "alive_rate": 1.124,
-      "avg_latency_ms": 2142
+      "nodes": 90,
+      "alive": 3,
+      "alive_rate": 3.333,
+      "avg_latency_ms": 1343
     },
     {
-      "source": "peasoft/NoMoreWalls:list_raw.txt",
-      "nodes": 56,
-      "alive": 0,
-      "alive_rate": 0.0,
-      "avg_latency_ms": null
+      "source": "anaer/Sub:clash.yaml",
+      "nodes": 325,
+      "alive": 9,
+      "alive_rate": 2.769,
+      "avg_latency_ms": 1097
+    },
+    {
+      "source": "mahdibland/V2RayAggregator:sub_merge_base64.txt",
+      "nodes": 3616,
+      "alive": 78,
+      "alive_rate": 2.157,
+      "avg_latency_ms": 1428
     },
     {
       "source": "w1770946466/Auto_proxy:Long_term_subscription",
