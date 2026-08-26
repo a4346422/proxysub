@@ -1,94 +1,101 @@
 {
-  "total_nodes": 8983,
-  "total_alive": 475,
+  "total_nodes": 8981,
+  "total_alive": 442,
   "sources": [
     {
       "source": "free-nodes/v2rayfree:v202607271",
-      "nodes": 12,
-      "alive": 12,
+      "nodes": 11,
+      "alive": 11,
       "alive_rate": 100.0,
-      "avg_latency_ms": 814
-    },
-    {
-      "source": "free-nodes/v2rayfree:v202608041",
-      "nodes": 2,
-      "alive": 2,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 644
+      "avg_latency_ms": 1045
     },
     {
       "source": "free-nodes/v2rayfree:v202608081",
       "nodes": 2,
       "alive": 2,
       "alive_rate": 100.0,
-      "avg_latency_ms": 2546
+      "avg_latency_ms": 1188
+    },
+    {
+      "source": "free-nodes/v2rayfree:v202608041",
+      "nodes": 2,
+      "alive": 2,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 972
     },
     {
       "source": "free-nodes/v2rayfree:v202607301",
       "nodes": 2,
       "alive": 2,
       "alive_rate": 100.0,
-      "avg_latency_ms": 897
+      "avg_latency_ms": 1150
     },
     {
       "source": "free-nodes/v2rayfree:v202607281",
       "nodes": 1,
       "alive": 1,
       "alive_rate": 100.0,
-      "avg_latency_ms": 844
+      "avg_latency_ms": 1154
     },
     {
       "source": "free-nodes/v2rayfree:v202608071",
       "nodes": 1,
       "alive": 1,
       "alive_rate": 100.0,
-      "avg_latency_ms": 6702
+      "avg_latency_ms": 1180
     },
     {
       "source": "Pawdroid/Free-servers:sub_en",
-      "nodes": 45,
-      "alive": 44,
-      "alive_rate": 97.778,
-      "avg_latency_ms": 1083
+      "nodes": 42,
+      "alive": 40,
+      "alive_rate": 95.238,
+      "avg_latency_ms": 1546
     },
     {
       "source": "Pawdroid/Free-servers:sub",
-      "nodes": 22,
-      "alive": 6,
-      "alive_rate": 27.273,
-      "avg_latency_ms": 1758
+      "nodes": 20,
+      "alive": 4,
+      "alive_rate": 20.0,
+      "avg_latency_ms": 1026
     },
     {
       "source": "anaer/Sub:clash.yaml",
-      "nodes": 76,
-      "alive": 10,
-      "alive_rate": 13.158,
-      "avg_latency_ms": 1049
+      "nodes": 75,
+      "alive": 9,
+      "alive_rate": 12.0,
+      "avg_latency_ms": 1380
     },
     {
       "source": "ts-sf/fly:v2",
-      "nodes": 168,
-      "alive": 13,
-      "alive_rate": 7.738,
-      "avg_latency_ms": 1650
+      "nodes": 172,
+      "alive": 17,
+      "alive_rate": 9.884,
+      "avg_latency_ms": 2317
     },
     {
       "source": "Leon406/SubCrawler:vless",
-      "nodes": 4816,
-      "alive": 303,
-      "alive_rate": 6.292,
-      "avg_latency_ms": 1223
+      "nodes": 4817,
+      "alive": 276,
+      "alive_rate": 5.73,
+      "avg_latency_ms": 1366
+    },
+    {
+      "source": "mfuu/v2ray:v2ray",
+      "nodes": 40,
+      "alive": 1,
+      "alive_rate": 2.5,
+      "avg_latency_ms": 7655
     },
     {
       "source": "mahdibland/V2RayAggregator:sub_merge_base64.txt",
-      "nodes": 3587,
-      "alive": 79,
-      "alive_rate": 2.202,
-      "avg_latency_ms": 1435
+      "nodes": 3586,
+      "alive": 76,
+      "alive_rate": 2.119,
+      "avg_latency_ms": 1442
     },
     {
       "source": "peasoft/NoMoreWalls:list_raw.txt",
-      "nodes": 53,
+      "nodes": 52,
       "alive": 0,
       "alive_rate": 0.0,
       "avg_latency_ms": null
@@ -106,13 +113,6 @@
       "alive": 0,
       "alive_rate": 0.0,
       "avg_latency_ms": null
-    },
-    {
-      "source": "mfuu/v2ray:v2ray",
-      "nodes": 38,
-      "alive": 0,
-      "alive_rate": 0.0,
-      "avg_latency_ms": 1980
     },
     {
       "source": "ermaozi01/free_clash_vpn:v2ray.txt",
