@@ -90,7 +90,18 @@ def _stream_settings(n):
 
     if tls in ("tls", "xtls"):
         ss["security"] = "tls"
-        t = {"allowInsecure": True}
+        # 不能写 allowInsecure：xray v26.3.27 起该字段被移除（迁到
+        # pinnedPeerCertSha256），写 true 会让整份配置加载失败。
+        #
+        # 这曾是个静默的大坑：池子里 52% 的节点是 tls/xtls，它们生成的配置
+        # 全部非法，drop_bad_outbounds 的 60 次上限根本摘不完，导致整批
+        # 100 个节点被跳过 —— 实测 60 批里 41 批如此，B 段只有 16.7% 的
+        # 候选真正被测过。老兵名单里 tls:tls 节点数为 0 就是这么来的。
+        #
+        # 迁移目标 pinnedPeerCertSha256 需要预先知道证书指纹，对公开池
+        # 不可行。这里就让证书校验生效（xray 默认行为）：自签/域名不匹配的
+        # 节点会握手失败被判死。这比「整批误杀」准确得多。
+        t = {}
         if sni:
             t["serverName"] = sni.split(",")[0]
         if alpn:
@@ -109,12 +120,32 @@ def _stream_settings(n):
     return ss
 
 
+# reality 必须有非空 publicKey，否则 xray 报 empty "password"。
+# 这与 formats.py 的 _reality_exportable 判定一致 —— 那边是导出时丢弃，
+# 这边是测活前丢弃，两处都要有：能测通但导不出、或能导出但测不了都是浪费。
+def _reality_ok(n):
+    if str(n.get("tls") or "").lower() != "reality":
+        return True
+    return bool(str(n.get("pbk") or "").strip())
+
+
+# xtls-rprx-origin / -direct 是早期 XTLS 流控，xray 已只支持 xtls-rprx-vision
+VALID_FLOWS = {"", "xtls-rprx-vision", "xtls-rprx-vision-udp443"}
+
+
 def to_outbound(n, tag):
     """节点 dict → xray outbound；不支持的返回 None"""
     p = n["proto"]
     try:
         n = dict(n, port=int(n["port"]))
     except (KeyError, TypeError, ValueError):
+        return None
+    # 前置拦掉确定非法的，避免进配置后靠 drop_bad_outbounds 逐个试探
+    if not _reality_ok(n):
+        return None
+    if str(n.get("flow") or "").strip() not in VALID_FLOWS:
+        return None
+    if str(n.get("net") or "").lower() in ("none",):
         return None
     try:
         if p == "vmess":
@@ -170,31 +201,59 @@ def config_ok(cfg, tag="test"):
     return r.returncode == 0, ""
 
 
-def drop_bad_outbounds(nodes, tag="scrub"):
+def drop_bad_outbounds(nodes, tag="scrub", _depth=0):
     """反复 -test，把导致加载失败的 outbound 摘掉，直到整批配置合法。
-    单节点重试代价太高，靠错误信息里的 tag 精确定位。"""
+    单节点重试代价太高，靠错误信息里的 tag 精确定位。
+
+    xray 一次只报第一个坏 tag（实测：30 个坏节点要 31 次 -test 才收敛），
+    所以只能逐个摘。上限设为节点数 + 余量，而不是固定 60 —— 曾因固定 60
+    在坏节点占半数时耗尽，且**耗尽后返回的仍是非法列表**，导致 start_xray
+    必然失败、整批 100 个候选作废（实测 60 批里 41 批如此）。
+
+    耗尽或无法定位时不再返回非法列表，改为二分递归：把批拆成两半各自
+    净化。这样最坏情况下也只损失真正有问题的那一小块，而不是整批。
+    """
     import re
     cur = list(nodes)
     dropped = 0
-    for _ in range(60):
+    # 上限给到节点数 +10：坏节点最多也就是全部，留点余量给重复定位
+    limit = len(cur) + 10
+    for _ in range(limit):
         cfg, mapping = build_config(cur)
         if not mapping:
             return []
         ok, err = config_ok(cfg, tag)
         if ok:
+            if dropped:
+                print(f"    摘除 {dropped} 个不兼容节点（剩 {len(cur)}）")
             return cur
         m = re.search(r"tag out(\d+)", err)
         if not m:
-            print(f"    无法定位坏节点，放弃该批: {err[:120]}")
-            return []
+            # 定位不到（错误没带 tag，比如 ss2022 密码解码失败发生在
+            # server 构建阶段）→ 二分拆分，别整批丢
+            return _split_scrub(cur, tag, err, _depth)
         # tag outN 的 N 是 mapping 下标（build_config 已跳过不可转换项），
         # 必须映射回 cur 中的实际节点再删，否则下标随删除而错位
         bad_node = mapping[int(m.group(1))][1]
         cur = [n for n in cur if n is not bad_node]
         dropped += 1
-    if dropped:
-        print(f"    摘除 {dropped} 个不兼容节点")
-    return cur
+    # 理论上到不了这里（limit 已覆盖全部节点），兜底也走二分
+    return _split_scrub(cur, tag, "迭代耗尽", _depth)
+
+
+def _split_scrub(nodes, tag, err, depth):
+    """二分净化：把批拆两半分别净化，避免因一个定位不到的坏节点丢掉整批。"""
+    if len(nodes) <= 1:
+        # 单个节点仍非法 → 只丢它一个
+        print(f"    丢弃 1 个无法定位的坏节点: {str(err).split('> ')[-1][:70]}")
+        return []
+    if depth >= 8:  # 2^8 = 256，足够覆盖任何批大小
+        print(f"    二分过深，放弃 {len(nodes)} 个节点")
+        return []
+    mid = len(nodes) // 2
+    left = drop_bad_outbounds(nodes[:mid], f"{tag}L", depth + 1)
+    right = drop_bad_outbounds(nodes[mid:], f"{tag}R", depth + 1)
+    return left + right
 
 
 def build_config(batch, base_port=BASE_PORT):

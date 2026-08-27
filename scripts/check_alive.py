@@ -54,6 +54,8 @@ TEST_URLS = _parse_test_urls()
 TEST_URL = TEST_URLS[-1] if TEST_URLS else "https://www.google.com/generate_204"
 TIMEOUT = int(os.environ.get("PROBE_TIMEOUT", 8))
 RETRY = int(os.environ.get("PROBE_RETRY", 1))
+# 第一关是否重试。默认 0 = 不重试，死节点快速淘汰（见 probe_retry）。
+FIRST_GATE_RETRY = os.environ.get("FIRST_GATE_RETRY", "0") == "1"
 WORKERS = int(os.environ.get("PROBE_WORKERS", 100))
 
 TCP_TIMEOUT = int(os.environ.get("TCP_TIMEOUT", 4))
@@ -159,17 +161,22 @@ def probe_retry(port):
     """
     last_code = "000"
     probe_ms = {}
-    for url in TEST_URLS:
+    for i, url in enumerate(TEST_URLS):
+        # 第一关不重试：B 段约 90% 是死节点，它们在第一关就要花
+        # (RETRY+1) × TIMEOUT 秒，而第一关失败基本等于节点不通，重试救不回来。
+        # 后面几关保留重试 —— 能过第一关说明节点是活的，那里的失败更可能
+        # 是瞬时抖动，值得重试。FIRST_GATE_RETRY=1 可退回旧行为。
+        retry = RETRY if (i > 0 or FIRST_GATE_RETRY) else 0
         ok_url = False
         ms_url = 0
-        for attempt in range(RETRY + 1):
+        for attempt in range(retry + 1):
             ok, ms, code = probe(port, url=url)
             last_code = code
             if ok:
                 ok_url = True
                 ms_url = ms
                 break
-            if attempt < RETRY:
+            if attempt < retry:
                 time.sleep(0.2)
         if not ok_url:
             return False, 0, last_code, None
@@ -249,8 +256,10 @@ def main():
 
     t0 = time.time()
     pool_n = len(nodes)
+    gate1 = RETRY if FIRST_GATE_RETRY else 0
     print(f"测活目标 {len(TEST_URLS)} 源（全过 AND，全部 204 才通过；失败短路），"
-          f"超时 {TIMEOUT}s，每源重试 {RETRY} 次；latency=max(各源)")
+          f"超时 {TIMEOUT}s，第一关重试 {gate1} 次、后续每源 {RETRY} 次；"
+          f"latency=max(各源)")
     for i, u in enumerate(TEST_URLS, 1):
         print(f"  {i}. {u}")
     print(f"老兵诊断: 名单 {len(all_vets)} 个，本轮采集池命中 "

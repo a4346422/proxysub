@@ -5,15 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 这是什么
 
 采集公开免费代理订阅源 → 解析成统一节点结构 → 用真实 Xray 内核测活 → 输出 4 种订阅格式。
-部署在 GitHub Actions 上每小时自动跑一轮，结果提交回仓库当订阅地址用。
+部署在 GitHub Actions 上每 2 小时自动跑一轮（cron `17 */2 * * *`），结果提交回仓库当订阅地址用。
 
-**两份代码，别混淆：**
-
-| 目录 | 状态 | 说明 |
-|---|---|---|
-| 根目录 | **交付物，改这里** | Linux/CI 可跑的完整流程，含增量调度、出口 IP 查询、源统计 |
-
-主要流程代码在 `scripts/` 下，GitHub Actions workflow 在 `.github/workflows/` 下。
+主要流程代码在 `scripts/` 下，GitHub Actions workflow 在 `.github/workflows/update.yml`。订阅产物和跨轮状态在 `output/`。
 
 ## 常用命令
 
@@ -39,7 +33,22 @@ INCREMENTAL=0 python check_alive.py
 EXP_SAMPLE=2000 python exp_tcp_filter.py
 ```
 
-没有测试框架、没有 lint 配置、不是 git 仓库。**验证靠实跑**：改完 `check_alive.py` 就带 `3000` 参数跑一轮，改完 `formats.py` 就解 base64 / `yaml.safe_load` / `json.load` 校验四种输出的条数和名称唯一性。
+没有测试框架、没有 lint 配置。**验证靠实跑**：改完 `check_alive.py` 就带 `3000` 参数跑一轮，改完 `formats.py` 就解 base64 / `yaml.safe_load` / `json.load` 校验四种输出的条数和名称唯一性。
+
+**本地测活可能完全不可用**：若本地网络有透明拦截，TCP 预筛会假阳性（连 `192.0.2.1` 这类保留地址都「可达」）、三个测活 URL 直连返回 `000`，测活结果恒为 0 且与代码正确性无关。判断方法：
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" --max-time 8 https://www.gstatic.com/generate_204   # 期望 204
+python -c "import socket; socket.create_connection(('192.0.2.1',443),timeout=4)"             # 期望抛异常
+```
+
+这种环境下**配置合法性仍可本地验证**（`xray -test` 不需要出网），但存活率必须靠 CI。且要用与 CI 相同版本的内核 —— workflow 拉 latest release，v2rayN 自带的内核可能比它更新，行为不一致会得出错误结论：
+
+```bash
+URL=$(curl -sSL https://api.github.com/repos/XTLS/Xray-core/releases/latest \
+      | grep -o '"browser_download_url": *"[^"]*Xray-windows-64\.zip"' | head -1 | cut -d'"' -f4)
+curl -sSL -o temp/x.zip "$URL" && unzip -o -q temp/x.zip -d temp/xray_ci
+```
 
 `XRAY_BIN` 不设时默认找 `bin/xray`（CI 里由 workflow 下载解压）。本地没有就指向 v2rayN 自带的内核。
 
@@ -51,8 +60,10 @@ EXP_SAMPLE=2000 python exp_tcp_filter.py
 
 这个设计有个致命脆弱点：**一个非法出站会让整份配置加载失败，整批节点全部误报为 0 存活**。曾因单个 h2 节点导致 8 个批次连续全灭。防护是两层，改 `xray_batch.py` 时不要动：
 
-- `config_ok()` 用 `xray -test` 预校验，`drop_bad_outbounds()` 解析报错里的 `tag outN` 定位并摘掉肇事节点。注意 `outN` 的 N 是 mapping 下标，**必须映射回实际节点对象再按身份过滤**，按列表下标删会因删除后位移而误删好节点。
+- `config_ok()` 用 `xray -test` 预校验，`drop_bad_outbounds()` 解析报错里的 `tag outN` 定位并摘掉肇事节点。注意 `outN` 的 N 是 mapping 下标，**必须映射回实际节点对象再按身份过滤**，按列表下标删会因删除后位移而误删好节点。迭代上限是「节点数 + 10」而非固定值 —— 曾用固定 60，坏节点过半时耗尽，**且耗尽后返回的仍是非法列表**，导致 `start_xray` 必然失败、整批作废。耗尽或定位不到时走 `_split_scrub()` 二分递归，只损失真正有问题的那一小块。
 - `SS_CIPHERS` 白名单（xray 已移除 CFB/CTR/RC4）、`_stream_settings()` 对 `net in ("h2","http")` 返回 `None`（Xray 26.x 移除了 h2 transport，迁到 XHTTP）。返回 `None` 后调用方必须一并返回 `None`，否则节点会静默退化成明文 TCP 产生假结果。
+- **`tlsSettings` 里绝不能写 `allowInsecure`**。xray v26.3.27 起该字段被移除（迁到 `pinnedPeerCertSha256`），写 `true` 会让整份配置加载失败。这曾造成一次大规模静默失效：池子里 52% 的节点是 `tls`/`xtls`，全部生成非法配置，`drop_bad_outbounds` 摘不完就整批跳过 —— 60 批里 41 批如此，B 段只有 16.7% 的候选被真正测过，老兵名单里 `tls:tls` 节点数长期为 0。同理 `verifyPeerCertInNames` 也已移除。
+- 前置拦截（`_reality_ok` / `VALID_FLOWS` / `net=none`）比事后靠 `drop_bad_outbounds` 试探便宜得多：xray 一次只报第一个坏 tag，摘 N 个坏节点就要 N+1 次 `-test`。能在 `to_outbound` 里判定的就别留给它。
 
 批次间要 `wait_ports_free()` 并错开端口段（`base = BASE_PORT + (batch_no % 3) * (BATCH_SIZE + 20)`），否则 TIME_WAIT 残留会让新进程静默启动失败，而 `port_ready()` 又把旧监听误认成"已就绪"。
 
@@ -67,7 +78,8 @@ EXP_SAMPLE=2000 python exp_tcp_filter.py
 
 1. 存在 `output/` 下才能被 workflow 的 `git add output/` 提交，这是它跨轮存活的**唯一途径**（runner 每轮都是新容器）
 2. 瘦身用**黑名单**（`DROP` 只剔 `latency_ms`/`idx`），不用白名单。曾用白名单漏掉 ss 的 `method` 字段，导致节点静默变成不可构造
-3. 国家/出口 IP **保留**在名单里。`check_ip.py` 是 `continue-on-error`，它失败时若无缓存，整份订阅节点名会退化成 UNKNOWN
+3. 国家/出口 IP **保留**在名单里。`check_ip.py` 是 `continue-on-error`，它失败时若无缓存，整份订阅节点名会退化成 UNKNOWN。
+   注意执行顺序：`check_alive.py` 调 `vt.update()` 写名单时**还没有出口信息**（`check_ip.py` 在它之后才跑），所以必须由 `check_ip.py` 结尾调 `vt.refresh_geo()` 补写。缺了这一步，新晋老兵永远存不进国家 —— 曾实测名单 400 个老兵 `country_code` 命中 0 个，这条兜底设计形同虚设。`refresh_geo` 只更新已在名单里的 key，不新增条目（谁进名单由 `update()` 决定）
 4. 淘汰要连续 `VET_MISS_LIMIT`（默认 3）轮未通；本轮没测到的老兵**不扣分**，否则 B 段被预算截断时会误伤
 
 ### TCP 预筛必须分片 + 复查
@@ -102,16 +114,20 @@ EXP_SAMPLE=2000 python exp_tcp_filter.py
 
 ## 关键环境变量
 
-完整表在 `README.md`。最常用于本地调试的：
+完整表在 `1.md`（面向用户的 README 正文，见文末「文档现状」）。最常用于本地调试的 —— **「代码默认」列是脚本里 `os.environ.get` 的兜底值，CI 里多数被 workflow 的 `env:` 覆盖，两者不同**：
 
-| 变量 | 默认 | 作用 |
-|---|---|---|
-| `XRAY_BIN` | `bin/xray` | 内核路径 |
-| `INCREMENTAL` | 1 | 增量调度，设 0 全量重跑 |
-| `PROBE_BUDGET_SEC` | 1920 | B 段时间预算，0 = 不限 |
-| `MAX_NODES` | 32000 | 候选池上限，超出按 `ROUND_SEED` 偏移抽样 |
-| `CHECK_IP` | 1 | 设 0 跳过出口 IP 查询，省 1–2 分钟 |
-| `TCP_CHUNK` / `TCP_RECHECK` | 2000 / 1 | 见上文，不要随意改 |
+| 变量 | 代码默认 | CI 值 | 作用 |
+|---|---|---|---|
+| `XRAY_BIN` | `bin/xray` | 同 | 内核路径 |
+| `INCREMENTAL` | 1 | 1 | 增量调度，设 0 全量重跑 |
+| `PROBE_BUDGET_SEC` | 0（不限） | 1920 | B 段时间预算 |
+| `MAX_NODES` | 0（不限） | 32000 | 候选池上限，超出按 `ROUND_SEED` 偏移抽样 |
+| `CHECK_IP` | — | 1 | 只在 workflow 里判断（`if: env.CHECK_IP != '0'`），脚本不读 |
+| `TCP_CHUNK` / `TCP_RECHECK` | 2000 / 1 | 2000 / 1 | 见上文，不要随意改 |
+| `VET_MAX` | 800 | 同 | 老兵名单上限 |
+| `GEO_TTL_SEC` | 86400 | 同 | 出口 IP 缓存有效期，过期重查 |
+| `FIRST_GATE_RETRY` | 0 | 同 | 第一关是否重试，设 1 退回旧行为 |
+| `REFRESH_GEO` | 0 | 同 | 设 1 强制全量重查出口 IP |
 
 ## 踩过的坑
 
@@ -122,6 +138,23 @@ EXP_SAMPLE=2000 python exp_tcp_filter.py
 
 ## 已知局限（不是 bug）
 
-可用率就是很低：3 万节点测出几十个（约 0.2%）。公开池里约 70% 服务器端口已死，剩下多数也无法真正出墙。池子从 5550 涨到 30271（5.5 倍）而存活数仍在 19–65 区间 —— 多数源在循环回收同一批死节点。节点寿命也极短，复测时几分钟内就有掉线的。
+可用率不高，但比早期文档记载的好得多。**下面数字以 2026-08-27 一轮 CI 为准**（run 33060804242），改动前先核对 `output/status.json` 的实际值，别照抄：
+
+| 指标 | 实际 |
+|---|---|
+| 节点池 | 9382（曾达 30271，现已回落） |
+| 存活 | 465（约 5.0%） |
+| 单轮耗时 | 13.3 分钟（timeout 45 分钟，余量充足） |
+| TCP 预筛可达率 | 68.5% |
+
+注意这轮的 465 是在 `allowInsecure` bug **未修复**时测出的，当时 B 段只有 16.7% 的候选真正被测过。修复后候选量约翻 6 倍，存活数应有明显上升。
+
+节点寿命很短，复测时几分钟内就有掉线的。多数源在循环回收同一批死节点。
 
 不支持 hysteria2 / tuic / ssr / 老式 ss 加密，采集阶段直接丢弃。
+
+## 文档现状
+
+`README.md` 目前是空的（1 字节，被 `59aa10f` 清空），面向用户的 README 正文实际在 **`1.md`**（订阅地址、部署步骤、完整环境变量表都在那）。后果是 GitHub 仓库首页显示空白。还没决定是否 `git mv 1.md README.md`，改动前先问。
+
+**测活的证书校验口径与客户端不一致**（有意保留的差异）：`xray_batch.py` 不写 `allowInsecure`（该字段已被 xray 移除），所以测活时证书校验是**开启**的；而 `formats.py` 导出的 Clash 带 `skip-cert-verify: true`、sing-box 带 `insecure: true`，客户端是**跳过**校验的。这意味着自签证书的节点可能测活失败但客户端实际可用 —— 偏保守，宁可漏掉也不给出不可用的节点。若要放宽，得走 `pinnedPeerCertSha256`，而那需要预先知道每个节点的证书指纹，对公开池不可行。

@@ -25,8 +25,13 @@ VET_FILE = OUT / "veterans.json"
 
 # 连续多少轮测不通就淘汰。免费节点单轮抖动大，给 3 轮宽限。
 MISS_LIMIT = int(os.environ.get("VET_MISS_LIMIT", 3))
-# 名单上限，防止无限膨胀吃掉 A 段时间。按存活数量级 65 给 4 倍余量。
-MAX_VET = int(os.environ.get("VET_MAX", 400))
+# 名单上限，防止无限膨胀吃掉 A 段时间。
+#
+# 800 而非原来的 400：400 是按「存活量级 65」定的 4 倍余量，但存活已涨到
+# 465，名单每轮都被截断，超出的节点下轮要从 B 段重新发现一遍。
+# A 段成本近似线性（400 个老兵 97 秒），翻倍也只加 ~100 秒，而单轮总耗时
+# 13 分钟、workflow timeout 45 分钟，余量充足。
+MAX_VET = int(os.environ.get("VET_MAX", 800))
 
 # 需要持久化的字段：够 xray 重建 outbound + 溯源 + 展示
 # 不存 latency_ms/exit_ip 之类每轮会变的，那些由当轮实测覆盖
@@ -62,6 +67,41 @@ def save(nodes, meta):
     VET_FILE.write_text(json.dumps(
         {"count": len(nodes), "nodes": nodes, "meta": meta},
         ensure_ascii=False), encoding="utf-8")
+
+
+# geo_ts 一并持久化：check_ip 靠它判断缓存是否过期，不存就每轮都重查
+GEO_FIELDS = ("exit_ip", "country_code", "country", "isp", "geo_ts")
+
+
+def refresh_geo(nodes):
+    """把本轮实测到的出口信息回写进名单，供下轮 check_ip 失败时兜底。
+
+    为什么需要单独一步：check_alive.py 在 update() 里写名单，而 check_ip.py
+    是**之后**才跑的，且原来只回写 temp/alive.json。于是新晋老兵永远存不进
+    国家信息 —— 实测名单里 400 个老兵 country_code 命中 0 个，上面那段
+    「用上轮缓存兜底」的设计形同虚设。
+
+    只更新已在名单中的 key，不新增条目（谁进名单由 update() 决定）。
+    返回实际写入的条数。
+    """
+    geo = {n.get("key"): {k: n[k] for k in GEO_FIELDS if n.get(k)}
+           for n in nodes if n.get("key") and n.get("exit_ip")}
+    if not geo:
+        return 0
+
+    old_nodes, meta = load()
+    if not old_nodes:
+        return 0
+
+    hit = 0
+    for n in old_nodes:
+        info = geo.get(n.get("key"))
+        if info:
+            n.update(info)
+            hit += 1
+    if hit:
+        save(old_nodes, meta)
+    return hit
 
 
 def update(alive, tested):

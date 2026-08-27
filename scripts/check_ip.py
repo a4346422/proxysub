@@ -13,6 +13,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+import veterans as vt
 import xray_batch as xb
 from countries import cc_to_name
 
@@ -24,6 +25,9 @@ BASE_PORT = int(os.environ.get("IP_BASE_PORT", 27001))
 WORKERS = int(os.environ.get("IP_WORKERS", 3))
 TIMEOUT = int(os.environ.get("IP_TIMEOUT", 20))
 ROUNDS = int(os.environ.get("IP_ROUNDS", 2))
+# 缓存出口信息的有效期。落地出口会变（换机房/换上游），过期就重查。
+# 24 小时 = cron 每 2 小时一轮，同一节点约每 12 轮重查一次。
+GEO_TTL_SEC = int(os.environ.get("GEO_TTL_SEC", 86400))
 
 # (url, ip字段, 国家字段, ISP字段) —— 单源易失败，多源轮询
 # (url, ip字段, 国家码字段, 国家名字段, ISP字段)
@@ -50,11 +54,31 @@ def query(port):
                     cc = (d.get(ck) or "").upper()[:2]
                     return {"exit_ip": d[ik], "country_code": cc,
                             "country": cc_to_name(cc, d.get(nk) or ""),
-                            "isp": (d.get(ok) or "")[:40]}
+                            "isp": (d.get(ok) or "")[:40],
+                            # 供下轮判断缓存是否过期
+                            "geo_ts": int(time.time())}
             except Exception:
                 pass
             time.sleep(0.15)
     return None
+
+
+def _writeback(nodes, f):
+    """回写 alive.json，并把出口信息同步进老兵名单。
+
+    名单同步是关键一步：check_alive.py 写名单时还没有出口信息（本步骤在它
+    之后才跑），不同步的话新晋老兵永远存不进国家，下轮 check_ip 失败时
+    整份订阅节点名会退化成 UNKNOWN。
+    """
+    f.write_text(json.dumps(nodes, ensure_ascii=False), encoding="utf-8")
+    try:
+        hit = vt.refresh_geo(nodes)
+        if hit:
+            print(f"已把出口信息同步进老兵名单 {hit} 个")
+    except Exception as e:
+        # 名单同步失败不该让整步失败（本步骤是 continue-on-error，
+        # 但 alive.json 已经写好了，没必要因为缓存写不进去而丢掉）
+        print(f"老兵名单同步失败（{str(e)[:60]}），跳过")
 
 
 def main():
@@ -67,12 +91,35 @@ def main():
         print("alive.json 为空，跳过")
         return 0
 
-    cfg, mapping = xb.build_config(nodes, base_port=BASE_PORT)
+    # 只查没有缓存出口的节点。老兵名单里已带 exit_ip 的（同一台机器落地
+    # 国家基本不变）直接复用 —— 查询走节点自身带宽且 WORKERS=3，465 个
+    # 节点要 155 波串行、约 4 分钟，占全流程 30%。跳过缓存后每轮只查新
+    # 发现的几十个。REFRESH_GEO=1 可强制全量重查。
+    #
+    # 缓存不能永久有效：机器的落地出口确实会变（换机房、换上游），
+    # 缓存超过 GEO_TTL_SEC（默认 24 小时）就重查，避免国家标注长期失准。
+    force = os.environ.get("REFRESH_GEO", "0") == "1"
+    now = int(time.time())
+
+    def stale(n):
+        if not n.get("exit_ip"):
+            return True
+        ts = n.get("geo_ts")
+        if not isinstance(ts, int):
+            return True  # 老数据没有时间戳，重查一次补上
+        return now - ts > GEO_TTL_SEC
+
+    todo = nodes if force else [n for n in nodes if stale(n)]
+    cached = len(nodes) - len(todo)
+
+    cfg, mapping = xb.build_config(todo, base_port=BASE_PORT)
     if not mapping:
-        print("无可构造节点")
+        print(f"无需查询（{cached} 个全部命中缓存）" if cached else "无可构造节点")
+        _writeback(nodes, f)
         return 0
 
-    print(f"查 {len(mapping)} 个存活节点的出口 IP（并发 {WORKERS}）")
+    print(f"查 {len(mapping)} 个存活节点的出口 IP（并发 {WORKERS}）"
+          f"{f'，{cached} 个复用缓存' if cached else ''}")
     proc, _ = xb.start_xray(cfg, "ipchk")
     try:
         with ThreadPoolExecutor(max_workers=WORKERS) as ex:
@@ -89,7 +136,7 @@ def main():
         info = by_key.get(n.get("key"))
         if info:
             n.update(info)
-    f.write_text(json.dumps(nodes, ensure_ascii=False), encoding="utf-8")
+    _writeback(nodes, f)
 
     got = len(by_key)
     print(f"查到 {got}/{len(mapping)}\n")
