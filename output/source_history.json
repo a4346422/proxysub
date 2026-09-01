@@ -1,21 +1,21 @@
 {
-  "rounds": 346,
+  "rounds": 347,
   "sources": {
     "Pawdroid/Free-servers:sub": {
-      "rounds": 346,
+      "rounds": 347,
       "zero_rounds": 12,
-      "alive_total": 2277,
-      "nodes_total": 6231,
-      "nodes_last": 41,
-      "alive_rate_cum": 36.5431
+      "alive_total": 2320,
+      "nodes_total": 6274,
+      "nodes_last": 43,
+      "alive_rate_cum": 36.978
     },
     "ermaozi/get_subscribe:v2ray.txt": {
-      "rounds": 345,
+      "rounds": 346,
       "zero_rounds": 116,
-      "alive_total": 411,
-      "nodes_total": 4434,
-      "nodes_last": 16,
-      "alive_rate_cum": 9.2693
+      "alive_total": 415,
+      "nodes_total": 4449,
+      "nodes_last": 15,
+      "alive_rate_cum": 9.3279
     },
     "free-nodes/v2rayfree:v202607261": {
       "rounds": 8,
@@ -26,28 +26,28 @@
       "alive_rate_cum": 1.2815
     },
     "anaer/Sub:clash.yaml": {
-      "rounds": 346,
+      "rounds": 347,
       "zero_rounds": 8,
-      "alive_total": 4432,
-      "nodes_total": 122690,
-      "nodes_last": 84,
-      "alive_rate_cum": 3.6124
+      "alive_total": 4447,
+      "nodes_total": 122771,
+      "nodes_last": 81,
+      "alive_rate_cum": 3.6222
     },
     "Leon406/SubCrawler:vless": {
-      "rounds": 346,
+      "rounds": 347,
       "zero_rounds": 0,
-      "alive_total": 107941,
-      "nodes_total": 6063867,
-      "nodes_last": 5865,
-      "alive_rate_cum": 1.7801
+      "alive_total": 108496,
+      "nodes_total": 6069769,
+      "nodes_last": 5902,
+      "alive_rate_cum": 1.7875
     },
     "mahdibland/V2RayAggregator:sub_merge_base64.txt": {
-      "rounds": 346,
+      "rounds": 347,
       "zero_rounds": 4,
-      "alive_total": 24844,
-      "nodes_total": 1463281,
-      "nodes_last": 3635,
-      "alive_rate_cum": 1.6978
+      "alive_total": 24933,
+      "nodes_total": 1467051,
+      "nodes_last": 3770,
+      "alive_rate_cum": 1.6995
     },
     "VPN-Subcription-Links/ClashX-V2Ray-TopFreeProxy:clash.config.yaml": {
       "rounds": 2,
@@ -66,12 +66,12 @@
       "alive_rate_cum": 0.0
     },
     "ts-sf/fly:v2": {
-      "rounds": 346,
+      "rounds": 347,
       "zero_rounds": 10,
-      "alive_total": 4066,
-      "nodes_total": 42336,
-      "nodes_last": 188,
-      "alive_rate_cum": 9.6041
+      "alive_total": 4099,
+      "nodes_total": 42520,
+      "nodes_last": 184,
+      "alive_rate_cum": 9.6402
     },
     "Leon406/SubCrawler:tr": {
       "rounds": 2,
@@ -90,26 +90,26 @@
       "alive_rate_cum": 4.1548
     },
     "w1770946466/Auto_proxy:Long_term_subscription": {
-      "rounds": 346,
-      "zero_rounds": 346,
+      "rounds": 347,
+      "zero_rounds": 347,
       "alive_total": 0,
-      "nodes_total": 14856,
+      "nodes_total": 14899,
       "nodes_last": 43,
       "alive_rate_cum": 0.0
     },
     "peasoft/NoMoreWalls:list_raw.txt": {
-      "rounds": 344,
-      "zero_rounds": 163,
+      "rounds": 345,
+      "zero_rounds": 164,
       "alive_total": 540,
-      "nodes_total": 16457,
-      "nodes_last": 50,
-      "alive_rate_cum": 3.2813
+      "nodes_total": 16489,
+      "nodes_last": 32,
+      "alive_rate_cum": 3.2749
     },
     "ermaozi01/free_clash_vpn:v2ray.txt": {
-      "rounds": 345,
-      "zero_rounds": 345,
+      "rounds": 346,
+      "zero_rounds": 346,
       "alive_total": 0,
-      "nodes_total": 9795,
+      "nodes_total": 9826,
       "nodes_last": 31,
       "alive_rate_cum": 0.0
     },
@@ -130,68 +130,68 @@
       "alive_rate_cum": 0.0
     },
     "vxiaov/free_proxies:clash.provider.yaml": {
-      "rounds": 346,
-      "zero_rounds": 346,
+      "rounds": 347,
+      "zero_rounds": 347,
       "alive_total": 0,
-      "nodes_total": 5680,
+      "nodes_total": 5694,
       "nodes_last": 14,
       "alive_rate_cum": 0.0
     },
     "ripaojiedian/freenode:sub": {
-      "rounds": 346,
-      "zero_rounds": 344,
+      "rounds": 347,
+      "zero_rounds": 345,
       "alive_total": 12,
-      "nodes_total": 4762,
+      "nodes_total": 4776,
       "nodes_last": 14,
-      "alive_rate_cum": 0.252
+      "alive_rate_cum": 0.2513
     },
     "Huibq/TrojanLinks:vmess": {
-      "rounds": 346,
-      "zero_rounds": 346,
+      "rounds": 347,
+      "zero_rounds": 347,
       "alive_total": 0,
-      "nodes_total": 8377,
+      "nodes_total": 8420,
       "nodes_last": 43,
       "alive_rate_cum": 0.0
     },
     "freefq/free:v2": {
-      "rounds": 345,
-      "zero_rounds": 345,
+      "rounds": 346,
+      "zero_rounds": 346,
       "alive_total": 0,
-      "nodes_total": 2121,
+      "nodes_total": 2127,
       "nodes_last": 6,
       "alive_rate_cum": 0.0
     },
     "Pawdroid/Free-servers:sub_en": {
-      "rounds": 346,
+      "rounds": 347,
       "zero_rounds": 10,
-      "alive_total": 6230,
-      "nodes_total": 7983,
-      "nodes_last": 46,
-      "alive_rate_cum": 78.0408
+      "alive_total": 6269,
+      "nodes_total": 8024,
+      "nodes_last": 41,
+      "alive_rate_cum": 78.1281
     },
     "free-nodes/v2rayfree:v202607271": {
-      "rounds": 341,
+      "rounds": 342,
       "zero_rounds": 3,
-      "alive_total": 3549,
-      "nodes_total": 8428,
+      "alive_total": 3561,
+      "nodes_total": 8440,
       "nodes_last": 12,
-      "alive_rate_cum": 42.1096
+      "alive_rate_cum": 42.1919
     },
     "free-nodes/v2rayfree:v202607281": {
-      "rounds": 278,
+      "rounds": 279,
       "zero_rounds": 0,
-      "alive_total": 880,
-      "nodes_total": 5772,
+      "alive_total": 881,
+      "nodes_total": 5773,
       "nodes_last": 1,
-      "alive_rate_cum": 15.246
+      "alive_rate_cum": 15.2607
     },
     "chengaopan/AutoMergePublicNodes:list.yml": {
-      "rounds": 11,
-      "zero_rounds": 8,
+      "rounds": 12,
+      "zero_rounds": 9,
       "alive_total": 4,
-      "nodes_total": 57,
-      "nodes_last": 1,
-      "alive_rate_cum": 7.0175
+      "nodes_total": 65,
+      "nodes_last": 8,
+      "alive_rate_cum": 6.1538
     },
     "free-nodes/v2rayfree:v202607291": {
       "rounds": 29,
@@ -202,12 +202,12 @@
       "alive_rate_cum": 11.4508
     },
     "free-nodes/v2rayfree:v202607301": {
-      "rounds": 273,
+      "rounds": 274,
       "zero_rounds": 0,
-      "alive_total": 811,
-      "nodes_total": 4696,
+      "alive_total": 813,
+      "nodes_total": 4698,
       "nodes_last": 2,
-      "alive_rate_cum": 17.27
+      "alive_rate_cum": 17.3052
     },
     "mfuu/v2ray:clash.yaml": {
       "rounds": 20,
@@ -250,12 +250,12 @@
       "alive_rate_cum": 7.1162
     },
     "free-nodes/v2rayfree:v202608041": {
-      "rounds": 219,
+      "rounds": 220,
       "zero_rounds": 0,
-      "alive_total": 701,
-      "nodes_total": 5090,
+      "alive_total": 703,
+      "nodes_total": 5092,
       "nodes_last": 2,
-      "alive_rate_cum": 13.7721
+      "alive_rate_cum": 13.806
     },
     "free-nodes/v2rayfree:v202608051": {
       "rounds": 194,
@@ -282,12 +282,12 @@
       "alive_rate_cum": 13.5913
     },
     "free-nodes/v2rayfree:v202608081": {
-      "rounds": 236,
+      "rounds": 237,
       "zero_rounds": 0,
-      "alive_total": 937,
-      "nodes_total": 7142,
+      "alive_total": 939,
+      "nodes_total": 7144,
       "nodes_last": 2,
-      "alive_rate_cum": 13.1196
+      "alive_rate_cum": 13.1439
     },
     "free-nodes/v2rayfree:v202608091": {
       "rounds": 89,
@@ -330,5 +330,5 @@
       "alive_rate_cum": 0.0
     }
   },
-  "updated_at": "2026-09-01 17:05:18 UTC"
+  "updated_at": "2026-09-01 21:26:33 UTC"
 }

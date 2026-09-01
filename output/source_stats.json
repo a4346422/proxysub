@@ -1,104 +1,90 @@
 {
-  "total_nodes": 10096,
-  "total_alive": 805,
+  "total_nodes": 10246,
+  "total_alive": 797,
   "sources": [
+    {
+      "source": "Pawdroid/Free-servers:sub",
+      "nodes": 43,
+      "alive": 43,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 1529
+    },
     {
       "source": "free-nodes/v2rayfree:v202607271",
       "nodes": 12,
       "alive": 12,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1187
+      "avg_latency_ms": 1431
     },
     {
       "source": "free-nodes/v2rayfree:v202608081",
       "nodes": 2,
       "alive": 2,
       "alive_rate": 100.0,
-      "avg_latency_ms": 2894
-    },
-    {
-      "source": "free-nodes/v2rayfree:v202607301",
-      "nodes": 2,
-      "alive": 2,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 875
+      "avg_latency_ms": 1099
     },
     {
       "source": "free-nodes/v2rayfree:v202608041",
       "nodes": 2,
       "alive": 2,
       "alive_rate": 100.0,
-      "avg_latency_ms": 3056
+      "avg_latency_ms": 1379
+    },
+    {
+      "source": "free-nodes/v2rayfree:v202607301",
+      "nodes": 2,
+      "alive": 2,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 1124
     },
     {
       "source": "free-nodes/v2rayfree:v202607281",
       "nodes": 1,
       "alive": 1,
       "alive_rate": 100.0,
-      "avg_latency_ms": 776
-    },
-    {
-      "source": "chengaopan/AutoMergePublicNodes:list.yml",
-      "nodes": 1,
-      "alive": 1,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 1039
-    },
-    {
-      "source": "Pawdroid/Free-servers:sub",
-      "nodes": 41,
-      "alive": 37,
-      "alive_rate": 90.244,
-      "avg_latency_ms": 2652
+      "avg_latency_ms": 1279
     },
     {
       "source": "Pawdroid/Free-servers:sub_en",
-      "nodes": 46,
+      "nodes": 41,
       "alive": 39,
-      "alive_rate": 84.783,
-      "avg_latency_ms": 1082
+      "alive_rate": 95.122,
+      "avg_latency_ms": 1781
     },
     {
       "source": "ermaozi/get_subscribe:v2ray.txt",
-      "nodes": 16,
+      "nodes": 15,
       "alive": 4,
-      "alive_rate": 25.0,
-      "avg_latency_ms": 1424
+      "alive_rate": 26.667,
+      "avg_latency_ms": 1393
     },
     {
       "source": "anaer/Sub:clash.yaml",
-      "nodes": 84,
-      "alive": 18,
-      "alive_rate": 21.429,
-      "avg_latency_ms": 2528
+      "nodes": 81,
+      "alive": 15,
+      "alive_rate": 18.519,
+      "avg_latency_ms": 1522
     },
     {
       "source": "ts-sf/fly:v2",
-      "nodes": 188,
-      "alive": 26,
-      "alive_rate": 13.83,
-      "avg_latency_ms": 1908
-    },
-    {
-      "source": "peasoft/NoMoreWalls:list_raw.txt",
-      "nodes": 50,
-      "alive": 5,
-      "alive_rate": 10.0,
-      "avg_latency_ms": 536
+      "nodes": 184,
+      "alive": 33,
+      "alive_rate": 17.935,
+      "avg_latency_ms": 2243
     },
     {
       "source": "Leon406/SubCrawler:vless",
-      "nodes": 5865,
-      "alive": 571,
-      "alive_rate": 9.736,
-      "avg_latency_ms": 1357
+      "nodes": 5902,
+      "alive": 555,
+      "alive_rate": 9.404,
+      "avg_latency_ms": 1600
     },
     {
       "source": "mahdibland/V2RayAggregator:sub_merge_base64.txt",
-      "nodes": 3635,
-      "alive": 85,
-      "alive_rate": 2.338,
-      "avg_latency_ms": 1510
+      "nodes": 3770,
+      "alive": 89,
+      "alive_rate": 2.361,
+      "avg_latency_ms": 1491
     },
     {
       "source": "w1770946466/Auto_proxy:Long_term_subscription",
@@ -113,6 +99,13 @@
       "alive": 0,
       "alive_rate": 0.0,
       "avg_latency_ms": null
+    },
+    {
+      "source": "peasoft/NoMoreWalls:list_raw.txt",
+      "nodes": 32,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": 1041
     },
     {
       "source": "ermaozi01/free_clash_vpn:v2ray.txt",
@@ -134,6 +127,13 @@
       "alive": 0,
       "alive_rate": 0.0,
       "avg_latency_ms": null
+    },
+    {
+      "source": "chengaopan/AutoMergePublicNodes:list.yml",
+      "nodes": 8,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": 6531
     },
     {
       "source": "freefq/free:v2",
