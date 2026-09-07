@@ -1,104 +1,104 @@
 {
-  "total_nodes": 11355,
-  "total_alive": 791,
+  "total_nodes": 11477,
+  "total_alive": 757,
   "sources": [
     {
       "source": "free-nodes/v2rayfree:v202607271",
       "nodes": 12,
       "alive": 12,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1069
-    },
-    {
-      "source": "chengaopan/AutoMergePublicNodes:list.yml",
-      "nodes": 2,
-      "alive": 2,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 882
-    },
-    {
-      "source": "free-nodes/v2rayfree:v202608081",
-      "nodes": 2,
-      "alive": 2,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 1089
-    },
-    {
-      "source": "free-nodes/v2rayfree:v202608041",
-      "nodes": 2,
-      "alive": 2,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 3996
+      "avg_latency_ms": 1079
     },
     {
       "source": "free-nodes/v2rayfree:v202607301",
       "nodes": 2,
       "alive": 2,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1132
+      "avg_latency_ms": 992
+    },
+    {
+      "source": "free-nodes/v2rayfree:v202608041",
+      "nodes": 2,
+      "alive": 2,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 4594
+    },
+    {
+      "source": "free-nodes/v2rayfree:v202608081",
+      "nodes": 2,
+      "alive": 2,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 3464
+    },
+    {
+      "source": "chengaopan/AutoMergePublicNodes:list.yml",
+      "nodes": 1,
+      "alive": 1,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 1913
     },
     {
       "source": "free-nodes/v2rayfree:v202607281",
       "nodes": 1,
       "alive": 1,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1159
+      "avg_latency_ms": 2714
     },
     {
       "source": "Pawdroid/Free-servers:sub",
-      "nodes": 59,
-      "alive": 54,
-      "alive_rate": 91.525,
-      "avg_latency_ms": 1375
+      "nodes": 63,
+      "alive": 57,
+      "alive_rate": 90.476,
+      "avg_latency_ms": 3060
     },
     {
       "source": "Pawdroid/Free-servers:sub_en",
-      "nodes": 54,
-      "alive": 46,
-      "alive_rate": 85.185,
-      "avg_latency_ms": 1551
+      "nodes": 58,
+      "alive": 50,
+      "alive_rate": 86.207,
+      "avg_latency_ms": 2247
     },
     {
       "source": "ermaozi/get_subscribe:v2ray.txt",
       "nodes": 14,
       "alive": 5,
       "alive_rate": 35.714,
-      "avg_latency_ms": 1242
+      "avg_latency_ms": 1585
     },
     {
       "source": "ts-sf/fly:v2",
-      "nodes": 197,
-      "alive": 30,
-      "alive_rate": 15.228,
-      "avg_latency_ms": 2426
-    },
-    {
-      "source": "peasoft/NoMoreWalls:list_raw.txt",
-      "nodes": 38,
-      "alive": 3,
-      "alive_rate": 7.895,
-      "avg_latency_ms": 1246
-    },
-    {
-      "source": "anaer/Sub:clash.yaml",
-      "nodes": 347,
-      "alive": 27,
-      "alive_rate": 7.781,
-      "avg_latency_ms": 1639
+      "nodes": 193,
+      "alive": 26,
+      "alive_rate": 13.472,
+      "avg_latency_ms": 2562
     },
     {
       "source": "Leon406/SubCrawler:vless",
-      "nodes": 6716,
-      "alive": 503,
-      "alive_rate": 7.49,
-      "avg_latency_ms": 1490
+      "nodes": 6693,
+      "alive": 475,
+      "alive_rate": 7.097,
+      "avg_latency_ms": 1707
+    },
+    {
+      "source": "anaer/Sub:clash.yaml",
+      "nodes": 422,
+      "alive": 29,
+      "alive_rate": 6.872,
+      "avg_latency_ms": 2304
+    },
+    {
+      "source": "peasoft/NoMoreWalls:list_raw.txt",
+      "nodes": 31,
+      "alive": 1,
+      "alive_rate": 3.226,
+      "avg_latency_ms": 958
     },
     {
       "source": "mahdibland/V2RayAggregator:sub_merge_base64.txt",
-      "nodes": 3758,
-      "alive": 102,
-      "alive_rate": 2.714,
-      "avg_latency_ms": 1606
+      "nodes": 3831,
+      "alive": 94,
+      "alive_rate": 2.454,
+      "avg_latency_ms": 2162
     },
     {
       "source": "w1770946466/Auto_proxy:Long_term_subscription",
@@ -137,7 +137,7 @@
     },
     {
       "source": "freefq/free:v2",
-      "nodes": 6,
+      "nodes": 7,
       "alive": 0,
       "alive_rate": 0.0,
       "avg_latency_ms": null
