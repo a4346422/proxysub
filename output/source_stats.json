@@ -1,104 +1,104 @@
 {
-  "total_nodes": 12000,
-  "total_alive": 992,
+  "total_nodes": 12003,
+  "total_alive": 750,
   "sources": [
     {
       "source": "free-nodes/v2rayfree:v202607271",
       "nodes": 10,
       "alive": 10,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1268
-    },
-    {
-      "source": "chengaopan/AutoMergePublicNodes:list.yml",
-      "nodes": 4,
-      "alive": 4,
-      "alive_rate": 100.0,
-      "avg_latency_ms": 1172
+      "avg_latency_ms": 1107
     },
     {
       "source": "free-nodes/v2rayfree:v202608041",
       "nodes": 2,
       "alive": 2,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1780
+      "avg_latency_ms": 1360
+    },
+    {
+      "source": "peasoft/NoMoreWalls:list_raw.txt",
+      "nodes": 2,
+      "alive": 2,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 1075
     },
     {
       "source": "free-nodes/v2rayfree:v202607301",
       "nodes": 2,
       "alive": 2,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1153
+      "avg_latency_ms": 802
     },
     {
-      "source": "free-nodes/v2rayfree:v202608081",
-      "nodes": 1,
-      "alive": 1,
+      "source": "chengaopan/AutoMergePublicNodes:list.yml",
+      "nodes": 2,
+      "alive": 2,
       "alive_rate": 100.0,
-      "avg_latency_ms": 1012
+      "avg_latency_ms": 1633
     },
     {
       "source": "free-nodes/v2rayfree:v202607281",
       "nodes": 1,
       "alive": 1,
       "alive_rate": 100.0,
-      "avg_latency_ms": 3551
+      "avg_latency_ms": 799
+    },
+    {
+      "source": "free-nodes/v2rayfree:v202608081",
+      "nodes": 1,
+      "alive": 1,
+      "alive_rate": 100.0,
+      "avg_latency_ms": 990
     },
     {
       "source": "Pawdroid/Free-servers:sub_en",
-      "nodes": 55,
-      "alive": 52,
-      "alive_rate": 94.545,
-      "avg_latency_ms": 1411
+      "nodes": 50,
+      "alive": 49,
+      "alive_rate": 98.0,
+      "avg_latency_ms": 1422
     },
     {
       "source": "Pawdroid/Free-servers:sub",
-      "nodes": 50,
-      "alive": 47,
-      "alive_rate": 94.0,
-      "avg_latency_ms": 1672
+      "nodes": 59,
+      "alive": 57,
+      "alive_rate": 96.61,
+      "avg_latency_ms": 2830
     },
     {
       "source": "anaer/Sub:clash.yaml",
-      "nodes": 27,
-      "alive": 19,
-      "alive_rate": 70.37,
-      "avg_latency_ms": 1858
+      "nodes": 26,
+      "alive": 18,
+      "alive_rate": 69.231,
+      "avg_latency_ms": 2601
     },
     {
       "source": "ermaozi/get_subscribe:v2ray.txt",
-      "nodes": 106,
-      "alive": 46,
-      "alive_rate": 43.396,
-      "avg_latency_ms": 2094
-    },
-    {
-      "source": "peasoft/NoMoreWalls:list_raw.txt",
-      "nodes": 20,
-      "alive": 7,
-      "alive_rate": 35.0,
-      "avg_latency_ms": 1338
+      "nodes": 111,
+      "alive": 33,
+      "alive_rate": 29.73,
+      "avg_latency_ms": 1514
     },
     {
       "source": "ts-sf/fly:v2",
-      "nodes": 204,
-      "alive": 43,
-      "alive_rate": 21.078,
-      "avg_latency_ms": 3416
+      "nodes": 208,
+      "alive": 45,
+      "alive_rate": 21.635,
+      "avg_latency_ms": 3845
     },
     {
       "source": "Leon406/SubCrawler:vless",
-      "nodes": 7716,
-      "alive": 651,
-      "alive_rate": 8.437,
-      "avg_latency_ms": 1325
+      "nodes": 7715,
+      "alive": 419,
+      "alive_rate": 5.431,
+      "avg_latency_ms": 1449
     },
     {
       "source": "mahdibland/V2RayAggregator:sub_merge_base64.txt",
-      "nodes": 3681,
-      "alive": 107,
-      "alive_rate": 2.907,
-      "avg_latency_ms": 1508
+      "nodes": 3683,
+      "alive": 109,
+      "alive_rate": 2.96,
+      "avg_latency_ms": 1687
     },
     {
       "source": "w1770946466/Auto_proxy:Long_term_subscription",
@@ -124,6 +124,13 @@
     {
       "source": "vxiaov/free_proxies:clash.provider.yaml",
       "nodes": 14,
+      "alive": 0,
+      "alive_rate": 0.0,
+      "avg_latency_ms": null
+    },
+    {
+      "source": "ermaozi01/free_clash_vpn:v2ray.txt",
+      "nodes": 10,
       "alive": 0,
       "alive_rate": 0.0,
       "avg_latency_ms": null
